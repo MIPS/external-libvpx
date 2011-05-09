@@ -13,8 +13,6 @@ LOCAL_SRC_FILES = \
     vpx_scale/generic/gen_scalers.c \
     vpx_scale/generic/scalesystemdependent.c \
     vp8/common/alloccommon.c \
-    vp8/common/arm/arm_systemdependent.c \
-    vp8/common/arm/reconintra_arm.c \
     vp8/common/blockd.c \
     vp8/common/debugmodes.c \
     vp8/common/entropy.c \
@@ -43,7 +41,6 @@ LOCAL_SRC_FILES = \
     vp8/common/postproc.c \
     vp8/vp8_cx_iface.c \
     vp8/vp8_dx_iface.c \
-    vp8/decoder/arm/arm_dsystemdependent.c \
     vp8/decoder/dboolhuff.c \
     vp8/decoder/decodemv.c \
     vp8/decoder/decodframe.c \
@@ -53,13 +50,32 @@ LOCAL_SRC_FILES = \
     vp8/decoder/onyxd_if.c \
     vp8/decoder/reconintra_mt.c \
     vp8/decoder/threading.c \
-    vpx_config.c \
-    vp8/decoder/arm/neon/idct_blk_neon.c
+    vpx_config.c
 
 LOCAL_CFLAGS := \
     -DHAVE_CONFIG_H=vpx_config.h
 
 LOCAL_MODULE := libvpx
+
+ifeq ($(TARGET_ARCH),mips)
+    ifneq ($(ARCH_HAS_BIGENDIAN),true)
+        ifeq ($(ARCH_MIPS_HAS_DSP),true)
+            LOCAL_SRC_FILES += \
+                vp8/common/mips/idct_mips.c \
+                vp8/common/mips/mips_systemdependent.c \
+	        vp8/common/mips/subpixel_mips.c
+
+            ifeq ($(ARCH_MIPS_DSP_REV),2)
+                LOCAL_SRC_FILES += \
+                    vp8/common/mips/loopfilter_filters_mips.c \
+                    vp8/common/mips/loopfilter_mips.c
+            endif # mips_dsp_rev2
+
+            LOCAL_CFLAGS += -DMDSP_REV=$(ARCH_MIPS_DSP_REV)
+
+        endif #has_dsp
+    endif #bigendian
+endif #mips
 
 ifeq ($(TARGET_ARCH),arm)
 
@@ -68,13 +84,16 @@ intermediates := $(call local-intermediates-dir)
 
 LOCAL_SRC_FILES += \
     vp8/common/arm/loopfilter_arm.c \
-    vp8/decoder/arm/dequantize_arm.c \
+    vp8/common/arm/arm_systemdependent.c \
+    vp8/common/arm/reconintra_arm.c \
+    vp8/decoder/arm/dequantize_arm.c
 
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
 
 LOCAL_CFLAGS += -D__ARM_HAVE_NEON
 
 ASM_FILES = \
+    vp8/decoder/arm/neon/idct_blk_neon.c \
     vp8/common/arm/neon/bilinearpredict16x16_neon.s \
     vp8/common/arm/neon/bilinearpredict4x4_neon.s \
     vp8/common/arm/neon/bilinearpredict8x4_neon.s \
