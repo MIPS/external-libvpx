@@ -31,8 +31,10 @@
 #include "arm/idct_arm.h"
 #endif
 
+#ifdef MDSP_REV
 #if (MDSP_REV>=1)
 #include "mips/idct_mips.h"
+#endif
 #endif
 
 #ifndef vp8_idct_idct1

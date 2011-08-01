@@ -9,6 +9,10 @@
 #define ARCH_ARM 0
 #endif
 
+#ifdef ARCH_MIPS
+#undef ARCH_MIPS
+#endif
+
 #if defined(__mips__)
 #define ARCH_MIPS 1
 #else

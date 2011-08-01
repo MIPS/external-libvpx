@@ -302,6 +302,12 @@ extern "C" {
             void                        *user_priv);
 
 
+    #ifdef MDSP_REV
+    #if (MDSP_REV>=2)
+        void dsputil_static_init();
+    #endif
+    #endif
+
     /*!@} - end defgroup cap_put_slice*/
 
     /*!@} - end defgroup decoder*/
