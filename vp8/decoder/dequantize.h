@@ -50,12 +50,6 @@
 #include "arm/dequantize_arm.h"
 #endif
 
-#ifdef MDSP_REV
-#if (MDSP_REV>=2)
-#include "mips/dequantize_mips.h"
-#endif
-#endif
-
 #ifndef vp8_dequant_block
 #define vp8_dequant_block vp8_dequantize_b_c
 #endif

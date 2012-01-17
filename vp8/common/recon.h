@@ -36,10 +36,8 @@ struct vp8_recon_rtcd_vtable;
 #include "arm/recon_arm.h"
 #endif
 
-#ifdef MDSP_REV
 #if (MDSP_REV>=1)
 #include "mips/recon_mips.h"
-#endif
 #endif
 
 #ifndef vp8_recon_copy16x16

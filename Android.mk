@@ -59,33 +59,21 @@ LOCAL_MODULE := libvpx
 
 ifeq ($(TARGET_ARCH),mips)
     ifneq ($(ARCH_HAS_BIGENDIAN),true)
-        ifeq ($(ARCH_MIPS_DSP_REV),2)
+        ifeq ($(ARCH_MIPS_HAS_DSP),true)
             LOCAL_SRC_FILES += \
                 vp8/common/mips/idct_mips.c \
                 vp8/common/mips/mips_systemdependent.c \
-                vp8/common/mips/subpixel_mips.c \
-                vp8/common/mips/loopfilter_filters_mips.c \
-                vp8/common/mips/loopfilter_mips.c \
-                vp8/common/mips/reconinter_mips.c \
-                vp8/decoder/mips/dequantize_mips.c \
-                vp8/decoder/mips/idct_blk_mips.c
+	        vp8/common/mips/subpixel_mips.c
 
-                LOCAL_CFLAGS += -DMDSP_REV=$(ARCH_MIPS_DSP_REV)
-
-        else
-            ifeq ($(ARCH_MIPS_DSP_REV),1)
+            ifeq ($(ARCH_MIPS_DSP_REV),2)
                 LOCAL_SRC_FILES += \
-                    vp8/common/mips/idct_mips.c \
-                    vp8/common/mips/mips_systemdependent.c \
-                    vp8/common/mips/reconinter_mips.c \
+                    vp8/common/mips/loopfilter_filters_mips.c \
+                    vp8/common/mips/loopfilter_mips.c
+            endif # mips_dsp_rev2
 
-                    LOCAL_CFLAGS += -DMDSP_REV=$(ARCH_MIPS_DSP_REV)
+            LOCAL_CFLAGS += -DMDSP_REV=$(ARCH_MIPS_DSP_REV)
 
-            else
-                    LOCAL_CFLAGS += -DMDSP_REV=0
-            endif # mips_dsp_rev1
-        endif # mips_dsp_rev2
-
+        endif #has_dsp
     endif #bigendian
 endif #mips
 

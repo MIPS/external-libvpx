@@ -18,7 +18,6 @@ extern prototype_subpixel_predict(vp8_sixtap_predict16x16_mips);
 extern prototype_subpixel_predict(vp8_sixtap_predict8x8_mips);
 extern prototype_subpixel_predict(vp8_sixtap_predict8x4_mips);
 extern prototype_subpixel_predict(vp8_sixtap_predict_mips);
-extern void dsputil_static_init(void);
 
 #undef  vp8_subpix_sixtap16x16
 #define vp8_subpix_sixtap16x16 vp8_sixtap_predict16x16_mips
