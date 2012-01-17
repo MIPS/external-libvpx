@@ -31,10 +31,6 @@
 #include "arm/idct_arm.h"
 #endif
 
-#if (MDSP_REV>=1)
-#include "mips/idct_mips.h"
-#endif
-
 #ifndef vp8_idct_idct1
 #define vp8_idct_idct1 vp8_short_idct4x4llm_1_c
 #endif
