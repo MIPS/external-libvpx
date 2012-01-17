@@ -26,10 +26,8 @@
 #include "arm/subpixel_arm.h"
 #endif
 
-#ifdef MDSP_REV
-#if (MDSP_REV>=2)
+#if (MDSP_REV>=1)
 #include "mips/subpixel_mips.h"
-#endif
 #endif
 
 #ifndef vp8_subpix_sixtap16x16
