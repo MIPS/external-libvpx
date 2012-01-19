@@ -12,8 +12,6 @@
 #ifndef SUBPIXEL_H
 #define SUBPIXEL_H
 
-#include "vpx_config.h"
-
 #define prototype_subpixel_predict(sym) \
     void sym(unsigned char *src, int src_pitch, int xofst, int yofst, \
              unsigned char *dst, int dst_pitch)
@@ -24,6 +22,12 @@
 
 #if ARCH_ARM
 #include "arm/subpixel_arm.h"
+#endif
+
+#ifdef MDSP_REV
+#if (MDSP_REV>=2)
+#include "mips/subpixel_mips.h"
+#endif
 #endif
 
 #ifndef vp8_subpix_sixtap16x16

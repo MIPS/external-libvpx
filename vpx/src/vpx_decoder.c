@@ -26,6 +26,12 @@ vpx_codec_err_t vpx_codec_dec_init_ver(vpx_codec_ctx_t      *ctx,
 {
     vpx_codec_err_t res;
 
+    #ifdef MDSP_REV
+    #if (MDSP_REV>=2)
+        dsputil_static_init();
+    #endif
+    #endif
+
     if (ver != VPX_DECODER_ABI_VERSION)
         res = VPX_CODEC_ABI_MISMATCH;
     else if (!ctx || !iface)
@@ -35,8 +41,6 @@ vpx_codec_err_t vpx_codec_dec_init_ver(vpx_codec_ctx_t      *ctx,
     else if ((flags & VPX_CODEC_USE_XMA) && !(iface->caps & VPX_CODEC_CAP_XMA))
         res = VPX_CODEC_INCAPABLE;
     else if ((flags & VPX_CODEC_USE_POSTPROC) && !(iface->caps & VPX_CODEC_CAP_POSTPROC))
-        res = VPX_CODEC_INCAPABLE;
-    else if (!(iface->caps & VPX_CODEC_CAP_DECODER))
         res = VPX_CODEC_INCAPABLE;
     else
     {
