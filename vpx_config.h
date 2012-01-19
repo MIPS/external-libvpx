@@ -3,6 +3,12 @@
 #define FORCEINLINE 
 #define RESTRICT    
 
+#if defined(__mips__)
+#define ARCH_MIPS 1
+#else
+#define ARCH_MIPS 0
+#endif
+
 #if defined(__arm__)
 
 #define ARCH_ARM 1
@@ -23,7 +29,6 @@
 #define HAVE_ARMV6 0
 #endif
 
-#define ARCH_MIPS 0
 #define ARCH_X86 0
 #define ARCH_X86_64 0
 #define ARCH_PPC32 0

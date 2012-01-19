@@ -51,6 +51,12 @@ typedef struct
 #include "arm/loopfilter_arm.h"
 #endif
 
+#ifdef MDSP_REV
+#if (MDSP_REV>=2)
+#include "mips/loopfilter_mips.h"
+#endif
+#endif
+
 #ifndef vp8_lf_normal_mb_v
 #define vp8_lf_normal_mb_v vp8_loop_filter_mbv_c
 #endif
