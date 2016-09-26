@@ -22,11 +22,12 @@ void vpx_iwht4x4_16_add_msa(const int16_t *input, uint8_t *dst,
   UNPCK_R_SH_SW(in2, in2_r);
   UNPCK_R_SH_SW(in3, in3_r);
   UNPCK_R_SH_SW(in1, in1_r);
-  SRA_4V(in0_r, in1_r, in2_r, in3_r, UNIT_QUANT_SHIFT);
+  SRAI_W4_SW(in0_r, in1_r, in2_r, in3_r, UNIT_QUANT_SHIFT);
 
   in0_r += in2_r;
   in3_r -= in1_r;
-  in4_r = (in0_r - in3_r) >> 1;
+  in4_r = (in0_r - in3_r);
+  in4_r = SRAI_W(in4_r, 1);
   in1_r = in4_r - in1_r;
   in2_r = in4_r - in2_r;
   in0_r -= in1_r;
@@ -36,7 +37,8 @@ void vpx_iwht4x4_16_add_msa(const int16_t *input, uint8_t *dst,
 
   in0_r += in1_r;
   in2_r -= in3_r;
-  in4_r = (in0_r - in2_r) >> 1;
+  in4_r = (in0_r - in2_r);
+  in4_r = SRAI_W(in4_r, 1);
   in3_r = in4_r - in3_r;
   in1_r = in4_r - in1_r;
   in0_r -= in3_r;
@@ -61,7 +63,7 @@ void vpx_iwht4x4_1_add_msa(const int16_t *input, uint8_t *dst,
   in0 = __msa_insert_h(in0, 2, e1);
   in0 = __msa_insert_h(in0, 3, e1);
 
-  in1 = in0 >> 1;
+  in1 = SRAI_H(in0, 1);
   in0 -= in1;
 
   ADDBLK_ST4x4_UB(in0, in1, in1, in1, dst, dst_stride);

@@ -31,39 +31,41 @@
     ILVEV_H2_SH(tmp0_m, const1, const2, tmp0_m, const1, const2);    \
 }
 
-#define RET_1_IF_NZERO_H(in0)       \
-({                                  \
-    v8i16 tmp0_m;                   \
-    v8i16 one_m = __msa_ldi_h(1);   \
-                                    \
-    tmp0_m = __msa_ceqi_h(in0, 0);  \
-    tmp0_m = tmp0_m ^ 255;          \
-    tmp0_m = one_m & tmp0_m;        \
-                                    \
-    tmp0_m;                         \
+#define RET_1_IF_NZERO_H(in0)           \
+({                                      \
+    v8i16 tmp0_m;                       \
+    v8i16 one_m = __msa_ldi_h(1);       \
+    v8i16 cnst_255 = __msa_fill_h(255); \
+                                        \
+    tmp0_m = CEQI_H(in0, 0);            \
+    tmp0_m ^= cnst_255;                 \
+    tmp0_m &= one_m;                    \
+                                        \
+    tmp0_m;                             \
 })
 
-#define RET_1_IF_NZERO_W(in0)       \
-({                                  \
-    v4i32 tmp0_m;                   \
-    v4i32 one_m = __msa_ldi_w(1);   \
-                                    \
-    tmp0_m = __msa_ceqi_w(in0, 0);  \
-    tmp0_m = tmp0_m ^ 255;          \
-    tmp0_m = one_m & tmp0_m;        \
-                                    \
-    tmp0_m;                         \
+#define RET_1_IF_NZERO_W(in0)           \
+({                                      \
+    v4i32 tmp0_m;                       \
+    v4i32 one_m = __msa_ldi_w(1);       \
+    v4i32 cnst_255 = __msa_fill_w(255); \
+                                        \
+    tmp0_m = CEQI_W(in0, 0);            \
+    tmp0_m ^= cnst_255;                 \
+    tmp0_m &= one_m;                    \
+                                        \
+    tmp0_m;                             \
 })
 
-#define RET_1_IF_NEG_W(in0)           \
-({                                    \
-    v4i32 tmp0_m;                     \
-                                      \
-    v4i32 one_m = __msa_ldi_w(1);     \
-    tmp0_m = __msa_clti_s_w(in0, 0);  \
-    tmp0_m = one_m & tmp0_m;          \
-                                      \
-    tmp0_m;                           \
+#define RET_1_IF_NEG_W(in0)        \
+({                                 \
+    v4i32 tmp0_m;                  \
+    v4i32 one_m = __msa_ldi_w(1);  \
+                                   \
+    tmp0_m = CLTI_S_W(in0, 0);     \
+    tmp0_m &= one_m;               \
+                                   \
+    tmp0_m;                        \
 })
 
 void vp8_short_fdct4x4_msa(int16_t *input, int16_t *output, int32_t pitch)
@@ -79,7 +81,7 @@ void vp8_short_fdct4x4_msa(int16_t *input, int16_t *output, int32_t pitch)
     TRANSPOSE4x4_SH_SH(in0, in1, in2, in3, in0, in1, in2, in3);
 
     BUTTERFLY_4(in0, in1, in2, in3, temp0, temp1, in1, in3);
-    SLLI_4V(temp0, temp1, in1, in3, 3);
+    SLLI_H4_SH(temp0, temp1, in1, in3, 3);
     in0 = temp0 + temp1;
     in2 = temp0 - temp1;
     SET_DOTP_VALUES(coeff, 0, 1, 2, const0, const1);
@@ -89,16 +91,15 @@ void vp8_short_fdct4x4_msa(int16_t *input, int16_t *output, int32_t pitch)
     coeff = __msa_ilvl_h(zero, coeff);
     out1 = __msa_splati_w((v4i32)coeff, 0);
     DPADD_SH2_SW(temp0, temp0, const0, const1, out0, out1);
-    out0 >>= 12;
-    out1 >>= 12;
+    SRAI_W2_SW(out0, out1, 12);
     PCKEV_H2_SH(out0, out0, out1, out1, in1, in3);
     TRANSPOSE4x4_SH_SH(in0, in1, in2, in3, in0, in1, in2, in3);
 
     BUTTERFLY_4(in0, in1, in2, in3, temp0, temp1, in1, in3);
-    in0 = temp0 + temp1 + 7;
-    in2 = temp0 - temp1 + 7;
-    in0 >>= 4;
-    in2 >>= 4;
+    in0 = temp0 + temp1;
+    in2 = temp0 - temp1;
+    ADDVI_H2_SH(in0, 7, in2, 7, in0, in2);
+    SRAI_H2_SH(in0, in2, 4);
     ILVR_H2_SW(zero, in0, zero, in2, out0, out2);
     temp1 = RET_1_IF_NZERO_H(in3);
     ILVR_H2_SH(zero, temp1, in3, in1, temp1, temp0);
@@ -106,8 +107,7 @@ void vp8_short_fdct4x4_msa(int16_t *input, int16_t *output, int32_t pitch)
     out3 += out1;
     out1 = __msa_splati_w((v4i32)coeff, 1);
     DPADD_SH2_SW(temp0, temp0, const0, const1, out1, out3);
-    out1 >>= 16;
-    out3 >>= 16;
+    SRAI_W2_SW(out1, out3, 16);
     out1 += (v4i32)temp1;
     PCKEV_H2_SH(out1, out0, out3, out2, in0, in2);
     ST_SH2(in0, in2, output, 8);
@@ -126,7 +126,7 @@ void vp8_short_fdct8x4_msa(int16_t *input, int16_t *output, int32_t pitch)
     TRANSPOSE4x4_H(in0, in1, in2, in3, in0, in1, in2, in3);
 
     BUTTERFLY_4(in0, in1, in2, in3, temp0, temp1, in1, in3);
-    SLLI_4V(temp0, temp1, in1, in3, 3);
+    SLLI_H4_SH(temp0, temp1, in1, in3, 3);
     in0 = temp0 + temp1;
     in2 = temp0 - temp1;
     SET_DOTP_VALUES(coeff, 0, 1, 2, const1, const2);
@@ -139,15 +139,15 @@ void vp8_short_fdct8x4_msa(int16_t *input, int16_t *output, int32_t pitch)
     vec2_w = vec3_w;
     DPADD_SH4_SW(tmp1, tmp0, tmp1, tmp0, const1, const1, const2, const2,
                  vec0_w, vec1_w, vec2_w, vec3_w);
-    SRA_4V(vec1_w, vec0_w, vec3_w, vec2_w, 12);
+    SRAI_W4_SW(vec1_w, vec0_w, vec3_w, vec2_w, 12);
     PCKEV_H2_SH(vec1_w, vec0_w, vec3_w, vec2_w, in1, in3);
     TRANSPOSE4x4_H(in0, in1, in2, in3, in0, in1, in2, in3);
 
     BUTTERFLY_4(in0, in1, in2, in3, temp0, temp1, in1, in3);
-    in0 = temp0 + temp1 + 7;
-    in2 = temp0 - temp1 + 7;
-    in0 >>= 4;
-    in2 >>= 4;
+    in0 = temp0 + temp1;
+    in2 = temp0 - temp1;
+    ADDVI_H2_SH(in0, 7, in2, 7, in0, in2);
+    SRAI_H2_SH(in0, in2, 4);
     SPLATI_W2_SW(coeff, 2, vec3_w, vec1_w);
     vec3_w += vec1_w;
     vec1_w = __msa_splati_w((v4i32)coeff, 1);
@@ -157,7 +157,7 @@ void vp8_short_fdct8x4_msa(int16_t *input, int16_t *output, int32_t pitch)
     vec2_w = vec3_w;
     DPADD_SH4_SW(tmp1, tmp0, tmp1, tmp0, const1, const1, const2, const2,
                  vec0_w, vec1_w, vec2_w, vec3_w);
-    SRA_4V(vec1_w, vec0_w, vec3_w, vec2_w, 16);
+    SRAI_W4_SW(vec1_w, vec0_w, vec3_w, vec2_w, 16);
     PCKEV_H2_SH(vec1_w, vec0_w, vec3_w, vec2_w, in1, in3);
     in1 += const0;
     PCKEV_D2_SH(in1, in0, in3, in2, temp0, temp1);
@@ -180,7 +180,7 @@ void vp8_short_walsh4x4_msa(int16_t *input, int16_t *output, int32_t pitch)
     UNPCK_R_SH_SW(in2_h, in2_w);
     UNPCK_R_SH_SW(in3_h, in3_w);
     BUTTERFLY_4(in0_w, in1_w, in3_w, in2_w, temp0, temp3, temp2, temp1);
-    SLLI_4V(temp0, temp1, temp2, temp3, 2);
+    SLLI_W4_SW(temp0, temp1, temp2, temp3, 2);
     BUTTERFLY_4(temp0, temp1, temp2, temp3, in0_w, in1_w, in2_w, in3_w);
     temp0 = RET_1_IF_NZERO_W(temp0);
     in0_w += temp0;
@@ -192,8 +192,9 @@ void vp8_short_walsh4x4_msa(int16_t *input, int16_t *output, int32_t pitch)
     in1_w += RET_1_IF_NEG_W(in1_w);
     in2_w += RET_1_IF_NEG_W(in2_w);
     in3_w += RET_1_IF_NEG_W(in3_w);
-    ADD4(in0_w, 3, in1_w, 3, in2_w, 3, in3_w, 3, in0_w, in1_w, in2_w, in3_w);
-    SRA_4V(in0_w, in1_w, in2_w, in3_w, 3);
+    ADDVI_W4_SW(in0_w, 3, in1_w, 3, in2_w, 3, in3_w, 3, in0_w, in1_w, in2_w,
+                in3_w);
+    SRAI_W4_SW(in0_w, in1_w, in2_w, in3_w, 3);
     PCKEV_H2_SH(in1_w, in0_w, in3_w, in2_w, in0_h, in1_h);
     ST_SH2(in0_h, in1_h, output, 8);
 }

@@ -27,7 +27,7 @@ int32_t vp8_denoiser_filter_msa(uint8_t *mc_running_avg_y_ptr,
     int32_t sum_diff = 0;
     int32_t shift_inc1 = 3;
     int32_t delta = 0;
-    int32_t sum_diff_thresh;
+    int32_t sum_diff_thresh = SUM_DIFF_THRESHOLD;
     v16u8 src0, src1, src2, src3, src4, src5, src6, src7;
     v16u8 src8, src9, src10, src11, src12, src13, src14, src15;
     v16u8 mc_running_avg_y0, running_avg_y, sig0;
@@ -83,34 +83,34 @@ int32_t vp8_denoiser_filter_msa(uint8_t *mc_running_avg_y_ptr,
         HSUB_UB2_SH(coeff0, coeff1, diff0, diff1);
         abs_diff0 = __msa_add_a_h(diff0, zero);
         abs_diff1 = __msa_add_a_h(diff1, zero);
-        cmp = __msa_clei_s_h(abs_diff0, 15);
+        cmp = CLEI_S_H(abs_diff0, 15);
         cmp = cmp & one;
         mask0 += cmp;
-        cmp = __msa_clei_s_h(abs_diff0, 7);
+        cmp = CLEI_S_H(abs_diff0, 7);
         cmp = cmp & one;
         mask0 += cmp;
         cmp = abs_diff0 < shift_inc1_vec;
         cmp = cmp & one;
         mask0 += cmp;
-        cmp = __msa_clei_s_h(abs_diff1, 15);
+        cmp = CLEI_S_H(abs_diff1, 15);
         cmp = cmp & one;
         mask1 += cmp;
-        cmp = __msa_clei_s_h(abs_diff1, 7);
+        cmp = CLEI_S_H(abs_diff1, 7);
         cmp = cmp & one;
         mask1 += cmp;
         cmp = abs_diff1 < shift_inc1_vec;
         cmp = cmp & one;
         mask1 += cmp;
-        temp0_h = __msa_clei_s_h(diff0, 0);
+        temp0_h = CLEI_S_H(diff0, 0);
         temp0_h = temp0_h & four;
         mask0 += temp0_h;
-        temp1_h = __msa_clei_s_h(diff1, 0);
+        temp1_h = CLEI_S_H(diff1, 0);
         temp1_h = temp1_h & four;
         mask1 += temp1_h;
         VSHF_H2_SH(adj_val, adj_val, adj_val, adj_val, mask0, mask1, adjust0,
                    adjust1);
-        temp2_h = __msa_ceqi_h(adjust0, 0);
-        temp3_h = __msa_ceqi_h(adjust1, 0);
+        temp2_h = CEQI_H(adjust0, 0);
+        temp3_h = CEQI_H(adjust1, 0);
         adjust0 = (v8i16)__msa_bmnz_v((v16u8)adjust0, (v16u8)diff0,
                                      (v16u8)temp2_h);
         adjust1 = (v8i16)__msa_bmnz_v((v16u8)adjust1, (v16u8)diff1,
@@ -133,34 +133,34 @@ int32_t vp8_denoiser_filter_msa(uint8_t *mc_running_avg_y_ptr,
         HSUB_UB2_SH(coeff0, coeff1, diff0, diff1);
         abs_diff0 = __msa_add_a_h(diff0, zero);
         abs_diff1 = __msa_add_a_h(diff1, zero);
-        cmp = __msa_clei_s_h(abs_diff0, 15);
+        cmp = CLEI_S_H(abs_diff0, 15);
         cmp = cmp & one;
         mask0 += cmp;
-        cmp = __msa_clei_s_h(abs_diff0, 7);
+        cmp = CLEI_S_H(abs_diff0, 7);
         cmp = cmp & one;
         mask0 += cmp;
         cmp = abs_diff0 < shift_inc1_vec;
         cmp = cmp & one;
         mask0 += cmp;
-        cmp = __msa_clei_s_h(abs_diff1, 15);
+        cmp = CLEI_S_H(abs_diff1, 15);
         cmp = cmp & one;
         mask1 += cmp;
-        cmp = __msa_clei_s_h(abs_diff1, 7);
+        cmp = CLEI_S_H(abs_diff1, 7);
         cmp = cmp & one;
         mask1 += cmp;
         cmp = abs_diff1 < shift_inc1_vec;
         cmp = cmp & one;
         mask1 += cmp;
-        temp0_h = __msa_clei_s_h(diff0, 0);
+        temp0_h = CLEI_S_H(diff0, 0);
         temp0_h = temp0_h & four;
         mask0 += temp0_h;
-        temp1_h = __msa_clei_s_h(diff1, 0);
+        temp1_h = CLEI_S_H(diff1, 0);
         temp1_h = temp1_h & four;
         mask1 += temp1_h;
         VSHF_H2_SH(adj_val, adj_val, adj_val, adj_val, mask0, mask1, adjust0,
                    adjust1);
-        temp2_h = __msa_ceqi_h(adjust0, 0);
-        temp3_h = __msa_ceqi_h(adjust1, 0);
+        temp2_h = CEQI_H(adjust0, 0);
+        temp3_h = CEQI_H(adjust1, 0);
         adjust0 = (v8i16)__msa_bmnz_v((v16u8)adjust0, (v16u8)diff0,
                                       (v16u8)temp2_h);
         adjust1 = (v8i16)__msa_bmnz_v((v16u8)adjust1, (v16u8)diff1,
@@ -183,11 +183,8 @@ int32_t vp8_denoiser_filter_msa(uint8_t *mc_running_avg_y_ptr,
     col_sum0 = __msa_min_s_h(col_sum0, val_127);
     col_sum1 = __msa_min_s_h(col_sum1, val_127);
     temp0_h = col_sum0 + col_sum1;
-    temp0_w = __msa_hadd_s_w(temp0_h, temp0_h);
-    temp0_d = __msa_hadd_s_d(temp0_w, temp0_w);
-    temp1_d = __msa_splati_d(temp0_d, 1);
-    temp0_d += temp1_d;
-    sum_diff = __msa_copy_s_w((v4i32)temp0_d, 0);
+    sum_diff = HADD_SH_S32(temp0_h);
+
     sig_ptr -= sig_stride * 16;
     mc_running_avg_y_ptr -= mc_avg_y_stride * 16;
     running_avg_y_ptr -= avg_y_stride * 16;
@@ -230,8 +227,8 @@ int32_t vp8_denoiser_filter_msa(uint8_t *mc_running_avg_y_ptr,
                      abs_diff_neg1);
                 abs_diff_neg0 = zero - abs_diff0;
                 abs_diff_neg1 = zero - abs_diff1;
-                temp0_h = __msa_clei_s_h(diff0, 0);
-                temp1_h = __msa_clei_s_h(diff1, 0);
+                temp0_h = CLEI_S_H(diff0, 0);
+                temp1_h = CLEI_S_H(diff1, 0);
                 adjust0 = (v8i16)__msa_bmnz_v((v16u8)abs_diff0,
                                               (v16u8)abs_diff_neg0,
                                               (v16u8)temp0_h);
@@ -242,8 +239,8 @@ int32_t vp8_denoiser_filter_msa(uint8_t *mc_running_avg_y_ptr,
                 ADD2(temp2_h, adjust0, temp3_h, adjust1, adjust2, adjust3);
                 MAXI_SH2_SH(adjust2, adjust3, 0);
                 SAT_UH2_SH(adjust2, adjust3, 7);
-                temp0_h = __msa_ceqi_h(diff0, 0);
-                temp1_h = __msa_ceqi_h(diff1, 0);
+                temp0_h = CEQI_H(diff0, 0);
+                temp1_h = CEQI_H(diff1, 0);
                 adjust2 = (v8i16)__msa_bmz_v((v16u8)adjust2, (v16u8)temp2_h,
                                              (v16u8)temp0_h);
                 adjust3 = (v8i16)__msa_bmz_v((v16u8)adjust3, (v16u8)temp3_h,
@@ -270,8 +267,8 @@ int32_t vp8_denoiser_filter_msa(uint8_t *mc_running_avg_y_ptr,
                                                (v16u8)temp1_h);
                 SUB2(zero, abs_diff0, zero, abs_diff1, abs_diff_neg0,
                      abs_diff_neg1);
-                temp0_h = __msa_clei_s_h(diff0, 0);
-                temp1_h = __msa_clei_s_h(diff1, 0);
+                temp0_h = CLEI_S_H(diff0, 0);
+                temp1_h = CLEI_S_H(diff1, 0);
                 adjust0 = (v8i16)__msa_bmnz_v((v16u8)abs_diff0,
                                               (v16u8)abs_diff_neg0,
                                               (v16u8)temp0_h);
@@ -282,8 +279,8 @@ int32_t vp8_denoiser_filter_msa(uint8_t *mc_running_avg_y_ptr,
                 ADD2(temp2_h, adjust0, temp3_h, adjust1, adjust2, adjust3);
                 MAXI_SH2_SH(adjust2, adjust3, 0);
                 SAT_UH2_SH(adjust2, adjust3, 7);
-                temp0_h = __msa_ceqi_h(diff0, 0);
-                temp1_h = __msa_ceqi_h(diff1, 0);
+                temp0_h = CEQI_H(diff0, 0);
+                temp1_h = CEQI_H(diff1, 0);
                 adjust2 = (v8i16)__msa_bmz_v((v16u8)adjust2, (v16u8)temp2_h,
                                              (v16u8)temp0_h);
                 adjust3 = (v8i16)__msa_bmz_v((v16u8)adjust3, (v16u8)temp3_h,
@@ -302,11 +299,7 @@ int32_t vp8_denoiser_filter_msa(uint8_t *mc_running_avg_y_ptr,
             col_sum2 = __msa_min_s_h(col_sum2, val_127);
             col_sum3 = __msa_min_s_h(col_sum3, val_127);
             temp0_h = col_sum2 + col_sum3;
-            temp0_w = __msa_hadd_s_w(temp0_h, temp0_h);
-            temp0_d = __msa_hadd_s_d(temp0_w, temp0_w);
-            temp1_d = __msa_splati_d(temp0_d, 1);
-            temp0_d += (v2i64)temp1_d;
-            sum_diff = __msa_copy_s_w((v4i32)temp0_d, 0);
+            sum_diff = HADD_SH_S32(temp0_h);
             if (abs(sum_diff) > SUM_DIFF_THRESHOLD)
             {
                 return COPY_BLOCK;
@@ -392,11 +385,7 @@ int32_t vp8_denoiser_filter_uv_msa(uint8_t *mc_running_avg_y_ptr,
     sig7 = LD_UB(sig_ptr);
     sig_ptr += sig_stride;
     temp0_h += (v8i16)__msa_ilvr_b(zero, (v16i8)sig7);
-    temp0_w = __msa_hadd_s_w(temp0_h, temp0_h);
-    temp0_d = __msa_hadd_s_d(temp0_w, temp0_w);
-    temp1_d = __msa_splati_d(temp0_d, 1);
-    temp0_d += temp1_d;
-    sum_block = __msa_copy_s_w((v4i32)temp0_d, 0);
+    sum_block = HADD_SH_S32(temp0_h);
     sig_ptr -= sig_stride * 8;
 
     if (abs(sum_block - (128 * 8 * 8)) < SUM_DIFF_FROM_AVG_THRESH_UV)
@@ -433,20 +422,20 @@ int32_t vp8_denoiser_filter_uv_msa(uint8_t *mc_running_avg_y_ptr,
         coeff0 = (v16u8)__msa_ilvr_b((v16i8)mc_running_avg_y0, (v16i8)sig0);
         diff0 = __msa_hsub_u_h(coeff0, coeff0);
         abs_diff0 = __msa_add_a_h(diff0, (v8i16)zero);
-        cmp = __msa_clei_s_h(abs_diff0, 15);
+        cmp = CLEI_S_H(abs_diff0, 15);
         cmp = cmp & one;
         mask0 += cmp;
-        cmp = __msa_clei_s_h(abs_diff0, 7);
+        cmp = CLEI_S_H(abs_diff0, 7);
         cmp = cmp & one;
         mask0 += cmp;
         cmp = abs_diff0 < shift_inc1_vec;
         cmp = cmp & one;
         mask0 += cmp;
-        temp0_h = __msa_clei_s_h(diff0, 0);
+        temp0_h = CLEI_S_H(diff0, 0);
         temp0_h = temp0_h & four;
         mask0 += temp0_h;
         adjust0 = __msa_vshf_h(mask0, adj_val, adj_val);
-        temp2_h = __msa_ceqi_h(adjust0, 0);
+        temp2_h = CEQI_H(adjust0, 0);
         adjust0 = (v8i16)__msa_bmnz_v((v16u8)adjust0, (v16u8)diff0,
                                       (v16u8)temp2_h);
         col_sum0 += adjust0;
@@ -466,20 +455,20 @@ int32_t vp8_denoiser_filter_uv_msa(uint8_t *mc_running_avg_y_ptr,
         coeff0 = (v16u8)__msa_ilvr_b((v16i8)mc_running_avg_y1, (v16i8)sig1);
         diff0 = __msa_hsub_u_h(coeff0, coeff0);
         abs_diff0 = __msa_add_a_h(diff0, (v8i16)zero);
-        cmp = __msa_clei_s_h(abs_diff0, 15);
+        cmp = CLEI_S_H(abs_diff0, 15);
         cmp = cmp & one;
         mask0 += cmp;
-        cmp = __msa_clei_s_h(abs_diff0, 7);
+        cmp = CLEI_S_H(abs_diff0, 7);
         cmp = cmp & one;
         mask0 += cmp;
         cmp = abs_diff0 < shift_inc1_vec;
         cmp = cmp & one;
         mask0 += cmp;
-        temp0_h = __msa_clei_s_h(diff0, 0);
+        temp0_h = CLEI_S_H(diff0, 0);
         temp0_h = temp0_h & four;
         mask0 += temp0_h;
         adjust0 = __msa_vshf_h(mask0, adj_val, adj_val);
-        temp2_h = __msa_ceqi_h(adjust0, 0);
+        temp2_h = CEQI_H(adjust0, 0);
         adjust0 = (v8i16)__msa_bmnz_v((v16u8)adjust0, (v16u8)diff0,
                                       (v16u8)temp2_h);
         col_sum0 += adjust0;
@@ -500,12 +489,7 @@ int32_t vp8_denoiser_filter_uv_msa(uint8_t *mc_running_avg_y_ptr,
         running_avg_y_ptr += avg_y_stride;
     }
 
-    temp0_h = col_sum0;
-    temp0_w = __msa_hadd_s_w(temp0_h, temp0_h);
-    temp0_d = __msa_hadd_s_d(temp0_w, temp0_w);
-    temp1_d = __msa_splati_d(temp0_d, 1);
-    temp0_d += temp1_d;
-    sum_diff = __msa_copy_s_w((v4i32)temp0_d, 0);
+    sum_diff = HADD_SH_S32(col_sum0);
     sig_ptr -= sig_stride * 8;
     mc_running_avg_y_ptr -= mc_avg_y_stride * 8;
     running_avg_y_ptr -= avg_y_stride * 8;
@@ -545,7 +529,7 @@ int32_t vp8_denoiser_filter_uv_msa(uint8_t *mc_running_avg_y_ptr,
                                                 (v16u8)delta_vec,
                                                 (v16u8)temp0_h);
                 abs_diff_neg0 = (v8i16)zero - abs_diff0;
-                temp0_h = __msa_clei_s_h(diff0, 0);
+                temp0_h = CLEI_S_H(diff0, 0);
                 adjust0 = (v8i16)__msa_bmz_v((v16u8)abs_diff0,
                                              (v16u8)abs_diff_neg0,
                                              (v16u8)temp0_h);
@@ -553,7 +537,7 @@ int32_t vp8_denoiser_filter_uv_msa(uint8_t *mc_running_avg_y_ptr,
                 adjust2 = temp2_h + adjust0;
                 adjust2 = __msa_maxi_s_h(adjust2, 0);
                 adjust2 = (v8i16)__msa_sat_u_h((v8u16)adjust2, 7);
-                temp0_h = __msa_ceqi_h(diff0, 0);
+                temp0_h = CEQI_H(diff0, 0);
                 adjust2 = (v8i16)__msa_bmnz_v((v16u8)adjust2, (v16u8)temp2_h,
                                               (v16u8)temp0_h);
                 adjust0 = (v8i16)__msa_bmnz_v((v16u8)adjust0, (v16u8)zero,
@@ -573,7 +557,7 @@ int32_t vp8_denoiser_filter_uv_msa(uint8_t *mc_running_avg_y_ptr,
                                                 (v16u8)delta_vec,
                                                 (v16u8)temp0_h);
                 abs_diff_neg0 = (v8i16)zero - abs_diff0;
-                temp0_h = __msa_clei_s_h(diff0, 0);
+                temp0_h = CLEI_S_H(diff0, 0);
                 adjust0 = (v8i16)__msa_bmz_v((v16u8)abs_diff0,
                                              (v16u8)abs_diff_neg0,
                                              (v16u8)temp0_h);
@@ -581,7 +565,7 @@ int32_t vp8_denoiser_filter_uv_msa(uint8_t *mc_running_avg_y_ptr,
                 adjust2 = temp2_h + adjust0;
                 adjust2 = __msa_maxi_s_h(adjust2, 0);
                 adjust2 = (v8i16)__msa_sat_u_h((v8u16)adjust2, 7);
-                temp0_h = __msa_ceqi_h(diff0, 0);
+                temp0_h = CEQI_H(diff0, 0);
                 adjust2 = (v8i16)__msa_bmnz_v((v16u8)adjust2, (v16u8)temp2_h,
                                               (v16u8)temp0_h);
                 adjust0 = (v8i16)__msa_bmnz_v((v16u8)adjust0, (v16u8)zero,
@@ -594,12 +578,7 @@ int32_t vp8_denoiser_filter_uv_msa(uint8_t *mc_running_avg_y_ptr,
                 running_avg_y_ptr += avg_y_stride;
             }
 
-            temp0_h = col_sum0;
-            temp0_w = __msa_hadd_s_w(temp0_h, temp0_h);
-            temp0_d = __msa_hadd_s_d(temp0_w, temp0_w);
-            temp1_d = __msa_splati_d(temp0_d, 1);
-            temp0_d += temp1_d;
-            sum_diff = __msa_copy_s_w((v4i32)temp0_d, 0);
+            sum_diff = HADD_SH_S32(col_sum0);
 
             if (abs(sum_diff) > sum_diff_thresh)
             {

@@ -40,9 +40,9 @@ static void common_hv_8ht_8vt_4w_msa(const uint8_t *src, int32_t src_stride,
   filt = LD_SH(filter_horiz);
   SPLATI_H4_SB(filt, 0, 1, 2, 3, filt_hz0, filt_hz1, filt_hz2, filt_hz3);
 
-  mask1 = mask0 + 2;
-  mask2 = mask0 + 4;
-  mask3 = mask0 + 6;
+  mask1 = (v16u8)ADDVI_B(mask0, 2);
+  mask2 = (v16u8)ADDVI_B(mask0, 4);
+  mask3 = (v16u8)ADDVI_B(mask0, 6);
 
   LD_SB7(src, src_stride, src0, src1, src2, src3, src4, src5, src6);
   XORI_B7_128_SB(src0, src1, src2, src3, src4, src5, src6);
@@ -115,9 +115,9 @@ static void common_hv_8ht_8vt_8w_msa(const uint8_t *src, int32_t src_stride,
   filt = LD_SH(filter_horiz);
   SPLATI_H4_SB(filt, 0, 1, 2, 3, filt_hz0, filt_hz1, filt_hz2, filt_hz3);
 
-  mask1 = mask0 + 2;
-  mask2 = mask0 + 4;
-  mask3 = mask0 + 6;
+  mask1 = (v16u8)ADDVI_B(mask0, 2);
+  mask2 = (v16u8)ADDVI_B(mask0, 4);
+  mask3 = (v16u8)ADDVI_B(mask0, 6);
 
   LD_SB7(src, src_stride, src0, src1, src2, src3, src4, src5, src6);
   src += (7 * src_stride);

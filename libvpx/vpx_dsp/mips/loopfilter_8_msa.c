@@ -163,6 +163,7 @@ void vpx_lpf_vertical_8_msa(uint8_t *src, int32_t pitch,
                             const uint8_t *limit_ptr,
                             const uint8_t *thresh_ptr,
                             int32_t count) {
+  uint8_t *data;
   v16u8 p3, p2, p1, p0, q3, q2, q1, q0;
   v16u8 p1_out, p0_out, q0_out, q1_out;
   v16u8 flat, mask, hev, thresh, b_limit, limit;
@@ -173,8 +174,23 @@ void vpx_lpf_vertical_8_msa(uint8_t *src, int32_t pitch,
 
   (void)count;
 
+#ifdef CLANG_BUILD
+  asm volatile (
+  #if (__mips == 64)
+      "daddiu  %[data],  %[src],  -4  \n\t"
+  #else
+      "addiu   %[data],  %[src],  -4  \n\t"
+  #endif
+  
+      : [data] "=r" (data)
+      : [src] "r" (src)
+  );
+#else
+  data = src - 4;
+#endif
+
   /* load vector elements */
-  LD_UB8(src - 4, pitch, p3, p2, p1, p0, q0, q1, q2, q3);
+  LD_UB8(data, pitch, p3, p2, p1, p0, q0, q1, q2, q3);
 
   TRANSPOSE8x8_UB_UB(p3, p2, p1, p0, q0, q1, q2, q3,
                      p3, p2, p1, p0, q0, q1, q2, q3);
@@ -256,7 +272,20 @@ void vpx_lpf_vertical_8_dual_msa(uint8_t *src, int32_t pitch,
   v16u8 zero = { 0 };
   v8i16 vec0, vec1, vec2, vec3, vec4, vec5, vec6, vec7;
 
+#ifdef CLANG_BUILD
+  asm volatile (
+  #if (__mips == 64)
+      "daddiu  %[temp_src],  %[src],  -4  \n\t"
+  #else
+      "addiu   %[temp_src],  %[src],  -4  \n\t"
+  #endif
+
+      : [temp_src] "=r" (temp_src)
+      : [src] "r" (src)
+  );
+#else
   temp_src = src - 4;
+#endif
 
   LD_UB8(temp_src, pitch, p0, p1, p2, p3, row4, row5, row6, row7);
   temp_src += (8 * pitch);
