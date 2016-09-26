@@ -11,83 +11,320 @@
 #ifndef VPX_DSP_MIPS_MACROS_MSA_H_
 #define VPX_DSP_MIPS_MACROS_MSA_H_
 
-#include <msa.h>
-
 #include "./vpx_config.h"
 #include "vpx/vpx_integer.h"
 
-#define LD_B(RTYPE, psrc) *((const RTYPE *)(psrc))
-#define LD_UB(...) LD_B(v16u8, __VA_ARGS__)
-#define LD_SB(...) LD_B(v16i8, __VA_ARGS__)
+#if defined(__clang__)
+    #define CLANG_BUILD
+#endif
 
-#define LD_H(RTYPE, psrc) *((const RTYPE *)(psrc))
-#define LD_UH(...) LD_H(v8u16, __VA_ARGS__)
-#define LD_SH(...) LD_H(v8i16, __VA_ARGS__)
+#ifdef CLANG_BUILD
+    typedef signed char v16i8 __attribute__((vector_size(16), aligned(16)));
+    typedef unsigned char v16u8 __attribute__((vector_size(16), aligned(16)));
+    typedef short v8i16 __attribute__((vector_size(16), aligned(16)));
+    typedef unsigned short v8u16 __attribute__((vector_size(16), aligned(16)));
+    typedef int v4i32 __attribute__((vector_size(16), aligned(16)));
+    typedef unsigned int v4u32 __attribute__((vector_size(16), aligned(16)));
+    typedef long long v2i64 __attribute__((vector_size(16), aligned(16)));
+    typedef unsigned long long v2u64 __attribute__((vector_size(16), aligned(16)));
 
-#define LD_W(RTYPE, psrc) *((const RTYPE *)(psrc))
-#define LD_SW(...) LD_W(v4i32, __VA_ARGS__)
+    #define __msa_slli_h     __builtin_msa_slli_h
+    #define __msa_srai_h     __builtin_msa_srai_h
+    #define __msa_srai_w     __builtin_msa_srai_w
+    #define __msa_srar_w     __builtin_msa_srar_w
+    #define __msa_srari_b    __builtin_msa_srari_b
+    #define __msa_srari_h    __builtin_msa_srari_h
+    #define __msa_srari_w    __builtin_msa_srari_w
+    #define __msa_srari_d    __builtin_msa_srari_d
+    #define __msa_srli_b     __builtin_msa_srli_b
+    #define __msa_srli_h     __builtin_msa_srli_h
+    #define __msa_addvi_b    __builtin_msa_addvi_b
+    #define __msa_addvi_h    __builtin_msa_addvi_h
+    #define __msa_maxi_s_h   __builtin_msa_maxi_s_h
+    #define __msa_max_u_b    __builtin_msa_max_u_b
+    #define __msa_min_s_h    __builtin_msa_min_s_h
+    #define __msa_ceqi_h     __builtin_msa_ceqi_h
+    #define __msa_clti_s_b   __builtin_msa_clti_s_b
+    #define __msa_clti_s_h   __builtin_msa_clti_s_h
+    #define __msa_clti_s_w   __builtin_msa_clti_s_w
+    #define __msa_clei_s_h   __builtin_msa_clei_s_h
+    #define __msa_sat_s_h    __builtin_msa_sat_s_h
+    #define __msa_sat_u_h    __builtin_msa_sat_u_h
+    #define __msa_adds_s_b   __builtin_msa_adds_s_b
+    #define __msa_adds_s_h   __builtin_msa_adds_s_h
+    #define __msa_adds_u_b   __builtin_msa_adds_u_b
+    #define __msa_ave_s_h    __builtin_msa_ave_s_h
+    #define __msa_aver_u_b   __builtin_msa_aver_u_b
+    #define __msa_subs_s_b   __builtin_msa_subs_s_b
+    #define __msa_subs_u_h   __builtin_msa_subs_u_h
+    #define __msa_asub_u_b   __builtin_msa_asub_u_b
+    #define __msa_hadd_s_w   __builtin_msa_hadd_s_w
+    #define __msa_hadd_s_d   __builtin_msa_hadd_s_d
+    #define __msa_hadd_u_h   __builtin_msa_hadd_u_h
+    #define __msa_hadd_u_w   __builtin_msa_hadd_u_w
+    #define __msa_hadd_u_d   __builtin_msa_hadd_u_d
+    #define __msa_hsub_s_w   __builtin_msa_hsub_s_w
+    #define __msa_hsub_u_h   __builtin_msa_hsub_u_h
+    #define __msa_dotp_s_h   __builtin_msa_dotp_s_h
+    #define __msa_dotp_s_w   __builtin_msa_dotp_s_w
+    #define __msa_dotp_s_d   __builtin_msa_dotp_s_d
+    #define __msa_dotp_u_h   __builtin_msa_dotp_u_h
+    #define __msa_dpadd_s_h  __builtin_msa_dpadd_s_h
+    #define __msa_dpadd_s_w  __builtin_msa_dpadd_s_w
+    #define __msa_dpadd_s_d  __builtin_msa_dpadd_s_d
+    #define __msa_sldi_b     __builtin_msa_sldi_b
+    #define __msa_splati_b   __builtin_msa_splati_b
+    #define __msa_splati_h   __builtin_msa_splati_h
+    #define __msa_splati_d   __builtin_msa_splati_d
+    #define __msa_pckev_b    __builtin_msa_pckev_b
+    #define __msa_pckev_h    __builtin_msa_pckev_h
+    #define __msa_pckev_w    __builtin_msa_pckev_w
+    #define __msa_pckev_d    __builtin_msa_pckev_d
+    #define __msa_pckod_d    __builtin_msa_pckod_d
+    #define __msa_ilvl_b     __builtin_msa_ilvl_b
+    #define __msa_ilvl_h     __builtin_msa_ilvl_h
+    #define __msa_ilvl_w     __builtin_msa_ilvl_w
+    #define __msa_ilvl_d     __builtin_msa_ilvl_d
+    #define __msa_ilvr_b     __builtin_msa_ilvr_b
+    #define __msa_ilvr_h     __builtin_msa_ilvr_h
+    #define __msa_ilvr_w     __builtin_msa_ilvr_w
+    #define __msa_ilvr_d     __builtin_msa_ilvr_d
+    #define __msa_ilvev_b    __builtin_msa_ilvev_b
+    #define __msa_ilvev_h    __builtin_msa_ilvev_h
+    #define __msa_ilvev_w    __builtin_msa_ilvev_w
+    #define __msa_ilvev_d    __builtin_msa_ilvev_d
+    #define __msa_ilvod_b    __builtin_msa_ilvod_b
+    #define __msa_ilvod_h    __builtin_msa_ilvod_h
+    #define __msa_ilvod_w    __builtin_msa_ilvod_w
+    #define __msa_ilvod_d    __builtin_msa_ilvod_d
+    #define __msa_vshf_b     __builtin_msa_vshf_b
+    #define __msa_ori_b      __builtin_msa_ori_b
+    #define __msa_xori_b     __builtin_msa_xori_b
+    #define __msa_bmnz_v     __builtin_msa_bmnz_v
+    #define __msa_test_bz_v  __builtin_msa_bz_v
+    #define __msa_fill_b     __builtin_msa_fill_b
+    #define __msa_fill_h     __builtin_msa_fill_h
+    #define __msa_fill_w     __builtin_msa_fill_w
+    #define __msa_copy_s_w   __builtin_msa_copy_s_w
+    #define __msa_copy_s_d   __builtin_msa_copy_s_d
+    #define __msa_copy_u_h   __builtin_msa_copy_u_h
+    #define __msa_copy_u_w   __builtin_msa_copy_u_w
+    #define __msa_copy_u_d   __builtin_msa_copy_u_d
+    #define __msa_insert_h   __builtin_msa_insert_h
+    #define __msa_insert_w   __builtin_msa_insert_w
+    #define __msa_insert_d   __builtin_msa_insert_d
+    #define __msa_insve_w    __builtin_msa_insve_w
+    #define __msa_ldi_b      __builtin_msa_ldi_b
+    #define __msa_ldi_h      __builtin_msa_ldi_h
+    #define __msa_ldi_w      __builtin_msa_ldi_w
 
-#define ST_B(RTYPE, in, pdst) *((RTYPE *)(pdst)) = (in)
-#define ST_UB(...) ST_B(v16u8, __VA_ARGS__)
-#define ST_SB(...) ST_B(v16i8, __VA_ARGS__)
+    #define ADDVI_B(a, b)  __msa_addvi_b((v16i8)a, b)
+    #define ADDVI_H(a, b)  __msa_addvi_h((v8i16)a, b)
+    #define SLLI_H(a, b)   __msa_slli_h((v8i16)a, b)
+    #define SRLI_B(a, b)   __msa_srli_b((v16i8)a, b)
+    #define SRLI_H(a, b)   __msa_srli_h((v8i16)a, b)
+    #define SRAI_H(a, b)   __msa_srai_h((v8i16)a, b)
+    #define SRAI_W(a, b)   __msa_srai_w((v4i32)a, b)
+    #define CEQI_H(a, b)   __msa_ceqi_h((v8i16)a, b)
+    #define CLTI_S_B(a, b) __msa_clti_s_b((v16i8)a, b)
+    #define CLTI_S_H(a, b) __msa_clti_s_h((v8i16)a, b)
+    #define CLTI_S_W(a, b) __msa_clti_s_w((v4i32)a, b)
+    #define CLEI_S_H(a, b) __msa_clei_s_h((v8i16)a, b)
+    #define XORI_B(a, b)   __msa_xori_b((v16u8)a, b)
+    #define ORI_B(a, b)    __msa_ori_b((v16u8)a, b)
+#else
+    #include <msa.h>
 
-#define ST_H(RTYPE, in, pdst) *((RTYPE *)(pdst)) = (in)
-#define ST_SH(...) ST_H(v8i16, __VA_ARGS__)
+    #define ADDVI_B(a, b)  ((v16i8)a + b)
+    #define ADDVI_H(a, b)  ((v8i16)a + b)
+    #define SLLI_H(a, b)   ((v8i16)a << b)
+    #define SRLI_B(a, b)   ((v16u8)a >> b)
+    #define SRLI_H(a, b)   ((v8u16)a >> b)
+    #define SRAI_H(a, b)   ((v8i16)a >> b)
+    #define SRAI_W(a, b)   ((v4i32)a >> b)
+    #define CEQI_H(a, b)   ((v8i16)a == b)
+    #define CLTI_S_B(a, b) ((v16i8)a < b)
+    #define CLTI_S_H(a, b) ((v8i16)a < b)
+    #define CLTI_S_W(a, b) ((v4i32)a < b)
+    #define CLEI_S_H(a, b) ((v8i16)a <= b)
+    #define XORI_B(a, b)   ((v16u8)a ^ b)
+    #define ORI_B(a, b)    ((v16u8)a | b)
+#endif
 
-#define ST_W(RTYPE, in, pdst) *((RTYPE *)(pdst)) = (in)
-#define ST_SW(...) ST_W(v4i32, __VA_ARGS__)
+#define LD_V(RTYPE, psrc) *((const RTYPE *)(psrc))
+#define LD_UB(...) LD_V(v16u8, __VA_ARGS__)
+#define LD_SB(...) LD_V(v16i8, __VA_ARGS__)
+#define LD_UH(...) LD_V(v8u16, __VA_ARGS__)
+#define LD_SH(...) LD_V(v8i16, __VA_ARGS__)
+#define LD_SW(...) LD_V(v4i32, __VA_ARGS__)
 
-#if (__mips_isa_rev >= 6)
-#define LH(psrc) ({                                 \
-  const uint8_t *psrc_m = (const uint8_t *)(psrc);  \
-  uint16_t val_m;                                   \
-                                                    \
-  __asm__ __volatile__ (                            \
-      "lh  %[val_m],  %[psrc_m]  \n\t"              \
-                                                    \
-      : [val_m] "=r" (val_m)                        \
-      : [psrc_m] "m" (*psrc_m)                      \
-  );                                                \
-                                                    \
-  val_m;                                            \
+#define ST_V(RTYPE, in, pdst) *((RTYPE *)(pdst)) = (in)
+#define ST_UB(...) ST_V(v16u8, __VA_ARGS__)
+#define ST_SB(...) ST_V(v16i8, __VA_ARGS__)
+#define ST_UH(...) ST_V(v8u16, __VA_ARGS__)
+#define ST_SH(...) ST_V(v8i16, __VA_ARGS__)
+#define ST_SW(...) ST_V(v4i32, __VA_ARGS__)
+
+#ifdef CLANG_BUILD
+#define LH(psrc) ({                                    \
+  const uint8_t *psrc_lh_m = (const uint8_t *)(psrc);  \
+  uint16_t val_m;                                      \
+                                                       \
+  asm volatile (                                       \
+      "lh  %[val_m],  %[psrc_lh_m]  \n\t"              \
+                                                       \
+      : [val_m] "=r" (val_m)                           \
+      : [psrc_lh_m] "m" (*psrc_lh_m)                   \
+  );                                                   \
+                                                       \
+  val_m;                                               \
 })
 
-#define LW(psrc) ({                                 \
-  const uint8_t *psrc_m = (const uint8_t *)(psrc);  \
-  uint32_t val_m;                                   \
-                                                    \
-  __asm__ __volatile__ (                            \
-      "lw  %[val_m],  %[psrc_m]  \n\t"              \
-                                                    \
-      : [val_m] "=r" (val_m)                        \
-      : [psrc_m] "m" (*psrc_m)                      \
-  );                                                \
-                                                    \
-  val_m;                                            \
+#define LW(psrc) ({                                    \
+  const uint8_t *psrc_lw_m = (const uint8_t *)(psrc);  \
+  uint32_t val_m;                                      \
+                                                       \
+  asm volatile (                                       \
+      "lw  %[val_m],  %[psrc_lw_m]  \n\t"              \
+                                                       \
+      : [val_m] "=r" (val_m)                           \
+      : [psrc_lw_m] "m" (*psrc_lw_m)                   \
+  );                                                   \
+                                                       \
+  val_m;                                               \
 })
 
 #if (__mips == 64)
-#define LD(psrc) ({                                 \
-  const uint8_t *psrc_m = (const uint8_t *)(psrc);  \
-  uint64_t val_m = 0;                               \
-                                                    \
-  __asm__ __volatile__ (                            \
-      "ld  %[val_m],  %[psrc_m]  \n\t"              \
-                                                    \
-      : [val_m] "=r" (val_m)                        \
-      : [psrc_m] "m" (*psrc_m)                      \
-  );                                                \
-                                                    \
-  val_m;                                            \
+#define LD(psrc) ({                                    \
+  const uint8_t *psrc_ld_m = (const uint8_t *)(psrc);  \
+  uint64_t val_m = 0;                                  \
+                                                       \
+  asm volatile (                                       \
+      "ld  %[val_m],  %[psrc_ld_m]  \n\t"              \
+                                                       \
+      : [val_m] "=r" (val_m)                           \
+      : [psrc_ld_m] "m" (*psrc_ld_m)                   \
+  );                                                   \
+                                                       \
+  val_m;                                               \
 })
 #else  // !(__mips == 64)
 #define LD(psrc) ({                                        \
-  const uint8_t *psrc_m = (const uint8_t *)(psrc);         \
+  const uint8_t *psrc_ld_m = (const uint8_t *)(psrc);      \
   uint32_t val0_m, val1_m;                                 \
   uint64_t val_m = 0;                                      \
                                                            \
-  val0_m = LW(psrc_m);                                     \
-  val1_m = LW(psrc_m + 4);                                 \
+  val0_m = LW(psrc_ld_m);                                  \
+  val1_m = LW(psrc_ld_m + 4);                              \
+                                                           \
+  val_m = (uint64_t)(val1_m);                              \
+  val_m = (uint64_t)((val_m << 32) & 0xFFFFFFFF00000000);  \
+  val_m = (uint64_t)(val_m | (uint64_t)val0_m);            \
+                                                           \
+  val_m;                                                   \
+})
+#endif  // (__mips == 64)
+
+#define SH(val, pdst) {                    \
+  uint8_t *pdst_sh_m = (uint8_t *)(pdst);  \
+  const uint16_t val_m = (val);            \
+                                           \
+  asm volatile (                           \
+      "sh  %[val_m],  %[pdst_sh_m]  \n\t"  \
+                                           \
+      : [pdst_sh_m] "=m" (*pdst_sh_m)      \
+      : [val_m] "r" (val_m)                \
+  );                                       \
+}
+
+#define SW(val, pdst) {                    \
+  uint8_t *pdst_sw_m = (uint8_t *)(pdst);  \
+  const uint32_t val_m = (val);            \
+                                           \
+  asm volatile (                           \
+      "sw  %[val_m],  %[pdst_sw_m]  \n\t"  \
+                                           \
+      : [pdst_sw_m] "=m" (*pdst_sw_m)      \
+      : [val_m] "r" (val_m)                \
+  );                                       \
+}
+
+#if (__mips == 64)
+#define SD(val, pdst) {                    \
+  uint8_t *pdst_sd_m = (uint8_t *)(pdst);  \
+  const uint64_t val_m = (val);            \
+                                           \
+  asm volatile (                           \
+      "sd  %[val_m],  %[pdst_sd_m]  \n\t"  \
+                                           \
+      : [pdst_sd_m] "=m" (*pdst_sd_m)      \
+      : [val_m] "r" (val_m)                \
+  );                                       \
+}
+#else
+#define SD(val, pdst) {                                     \
+  uint8_t *pdst_sd_m = (uint8_t *)(pdst);                   \
+  uint32_t val0_m, val1_m;                                  \
+                                                            \
+  val0_m = (uint32_t)((val) & 0x00000000FFFFFFFF);          \
+  val1_m = (uint32_t)(((val) >> 32) & 0x00000000FFFFFFFF);  \
+                                                            \
+  SW(val0_m, pdst_sd_m);                                    \
+  SW(val1_m, pdst_sd_m + 4);                                \
+}
+#endif
+#else
+#if (__mips_isa_rev >= 6)
+#define LH(psrc) ({                                    \
+  const uint8_t *psrc_lh_m = (const uint8_t *)(psrc);  \
+  uint16_t val_m;                                      \
+                                                       \
+  __asm__ __volatile__ (                               \
+      "lh  %[val_m],  %[psrc_lh_m]  \n\t"              \
+                                                       \
+      : [val_m] "=r" (val_m)                           \
+      : [psrc_lh_m] "m" (*psrc_lh_m)                   \
+  );                                                   \
+                                                       \
+  val_m;                                               \
+})
+
+#define LW(psrc) ({                                    \
+  const uint8_t *psrc_lw_m = (const uint8_t *)(psrc);  \
+  uint32_t val_m;                                      \
+                                                       \
+  __asm__ __volatile__ (                               \
+      "lw  %[val_m],  %[psrc_lw_m]  \n\t"              \
+                                                       \
+      : [val_m] "=r" (val_m)                           \
+      : [psrc_lw_m] "m" (*psrc_lw_m)                   \
+  );                                                   \
+                                                       \
+  val_m;                                               \
+})
+
+#if (__mips == 64)
+#define LD(psrc) ({                                    \
+  const uint8_t *psrc_ld_m = (const uint8_t *)(psrc);  \
+  uint64_t val_m = 0;                                  \
+                                                       \
+  __asm__ __volatile__ (                               \
+      "ld  %[val_m],  %[psrc_ld_m]  \n\t"              \
+                                                       \
+      : [val_m] "=r" (val_m)                           \
+      : [psrc_ld_m] "m" (*psrc_ld_m)                   \
+  );                                                   \
+                                                       \
+  val_m;                                               \
+})
+#else  // !(__mips == 64)
+#define LD(psrc) ({                                        \
+  const uint8_t *psrc_ld_m = (const uint8_t *)(psrc);      \
+  uint32_t val0_m, val1_m;                                 \
+  uint64_t val_m = 0;                                      \
+                                                           \
+  val0_m = LW(psrc_ld_m);                                  \
+  val1_m = LW(psrc_ld_m + 4);                              \
                                                            \
   val_m = (uint64_t)(val1_m);                              \
   val_m = (uint64_t)((val_m << 32) & 0xFFFFFFFF00000000);  \
@@ -133,56 +370,56 @@
   );                                    \
 }
 #else  // !(__mips_isa_rev >= 6)
-#define LH(psrc) ({                                 \
-  const uint8_t *psrc_m = (const uint8_t *)(psrc);  \
-  uint16_t val_m;                                   \
-                                                    \
-  __asm__ __volatile__ (                            \
-      "ulh  %[val_m],  %[psrc_m]  \n\t"             \
-                                                    \
-      : [val_m] "=r" (val_m)                        \
-      : [psrc_m] "m" (*psrc_m)                      \
-  );                                                \
-                                                    \
-  val_m;                                            \
+#define LH(psrc) ({                                    \
+  const uint8_t *psrc_lh_m = (const uint8_t *)(psrc);  \
+  uint16_t val_m;                                      \
+                                                       \
+  __asm__ __volatile__ (                               \
+      "ulh  %[val_m],  %[psrc_lh_m]  \n\t"             \
+                                                       \
+      : [val_m] "=r" (val_m)                           \
+      : [psrc_lh_m] "m" (*psrc_lh_m)                   \
+  );                                                   \
+                                                       \
+  val_m;                                               \
 })
 
-#define LW(psrc) ({                                 \
-  const uint8_t *psrc_m = (const uint8_t *)(psrc);  \
-  uint32_t val_m;                                   \
-                                                    \
-  __asm__ __volatile__ (                            \
-      "ulw  %[val_m],  %[psrc_m]  \n\t"             \
-                                                    \
-      : [val_m] "=r" (val_m)                        \
-      : [psrc_m] "m" (*psrc_m)                      \
-  );                                                \
-                                                    \
-  val_m;                                            \
+#define LW(psrc) ({                                    \
+  const uint8_t *psrc_lw_m = (const uint8_t *)(psrc);  \
+  uint32_t val_m;                                      \
+                                                       \
+  __asm__ __volatile__ (                               \
+      "ulw  %[val_m],  %[psrc_lw_m]  \n\t"             \
+                                                       \
+      : [val_m] "=r" (val_m)                           \
+      : [psrc_lw_m] "m" (*psrc_lw_m)                   \
+  );                                                   \
+                                                       \
+  val_m;                                               \
 })
 
 #if (__mips == 64)
-#define LD(psrc) ({                                 \
-  const uint8_t *psrc_m = (const uint8_t *)(psrc);  \
-  uint64_t val_m = 0;                               \
-                                                    \
-  __asm__ __volatile__ (                            \
-      "uld  %[val_m],  %[psrc_m]  \n\t"             \
-                                                    \
-      : [val_m] "=r" (val_m)                        \
-      : [psrc_m] "m" (*psrc_m)                      \
-  );                                                \
-                                                    \
-  val_m;                                            \
+#define LD(psrc) ({                                    \
+  const uint8_t *psrc_ld_m = (const uint8_t *)(psrc);  \
+  uint64_t val_m = 0;                                  \
+                                                       \
+  __asm__ __volatile__ (                               \
+      "uld  %[val_m],  %[psrc_ld_m]  \n\t"             \
+                                                       \
+      : [val_m] "=r" (val_m)                           \
+      : [psrc_ld_m] "m" (*psrc_ld_m)                   \
+  );                                                   \
+                                                       \
+  val_m;                                               \
 })
 #else  // !(__mips == 64)
 #define LD(psrc) ({                                        \
-  const uint8_t *psrc_m1 = (const uint8_t *)(psrc);        \
+  const uint8_t *psrc_ld_m = (const uint8_t *)(psrc);      \
   uint32_t val0_m, val1_m;                                 \
   uint64_t val_m = 0;                                      \
                                                            \
-  val0_m = LW(psrc_m1);                                    \
-  val1_m = LW(psrc_m1 + 4);                                \
+  val0_m = LW(psrc_ld_m);                                  \
+  val1_m = LW(psrc_ld_m + 4);                              \
                                                            \
   val_m = (uint64_t)(val1_m);                              \
   val_m = (uint64_t)((val_m << 32) & 0xFFFFFFFF00000000);  \
@@ -227,6 +464,7 @@
   SW(val1_m, pdst_m1 + 4);                                  \
 }
 #endif  // (__mips_isa_rev >= 6)
+#endif
 
 /* Description : Load 4 words with stride
    Arguments   : Inputs  - psrc, stride
@@ -294,15 +532,15 @@
                  Load 16 byte elements in 'out1' from (psrc + stride)
 */
 #define LD_B2(RTYPE, psrc, stride, out0, out1) {  \
-  out0 = LD_B(RTYPE, (psrc));                     \
-  out1 = LD_B(RTYPE, (psrc) + stride);            \
+  out0 = LD_V(RTYPE, (psrc));                     \
+  out1 = LD_V(RTYPE, (psrc) + stride);            \
 }
 #define LD_UB2(...) LD_B2(v16u8, __VA_ARGS__)
 #define LD_SB2(...) LD_B2(v16i8, __VA_ARGS__)
 
 #define LD_B3(RTYPE, psrc, stride, out0, out1, out2) {  \
   LD_B2(RTYPE, (psrc), stride, out0, out1);             \
-  out2 = LD_B(RTYPE, (psrc) + 2 * stride);              \
+  out2 = LD_V(RTYPE, (psrc) + 2 * stride);              \
 }
 #define LD_UB3(...) LD_B3(v16u8, __VA_ARGS__)
 
@@ -315,7 +553,7 @@
 
 #define LD_B5(RTYPE, psrc, stride, out0, out1, out2, out3, out4) {  \
   LD_B4(RTYPE, (psrc), stride, out0, out1, out2, out3);             \
-  out4 = LD_B(RTYPE, (psrc) + 4 * stride);                          \
+  out4 = LD_V(RTYPE, (psrc) + 4 * stride);                          \
 }
 #define LD_UB5(...) LD_B5(v16u8, __VA_ARGS__)
 #define LD_SB5(...) LD_B5(v16i8, __VA_ARGS__)
@@ -342,8 +580,8 @@
                  Load 8 halfword elements in 'out1' from (psrc + stride)
 */
 #define LD_H2(RTYPE, psrc, stride, out0, out1) {  \
-  out0 = LD_H(RTYPE, (psrc));                     \
-  out1 = LD_H(RTYPE, (psrc) + (stride));          \
+  out0 = LD_V(RTYPE, (psrc));                     \
+  out1 = LD_V(RTYPE, (psrc) + (stride));          \
 }
 #define LD_SH2(...) LD_H2(v8i16, __VA_ARGS__)
 
@@ -398,8 +636,8 @@
                  Store 16 byte elements from 'in1' to (pdst + stride)
 */
 #define ST_B2(RTYPE, in0, in1, pdst, stride) {  \
-  ST_B(RTYPE, in0, (pdst));                     \
-  ST_B(RTYPE, in1, (pdst) + stride);            \
+  ST_V(RTYPE, in0, (pdst));                     \
+  ST_V(RTYPE, in1, (pdst) + stride);            \
 }
 #define ST_UB2(...) ST_B2(v16u8, __VA_ARGS__)
 
@@ -422,8 +660,8 @@
                  Store 8 halfword elements from 'in1' to (pdst + stride)
 */
 #define ST_H2(RTYPE, in0, in1, pdst, stride) {  \
-  ST_H(RTYPE, in0, (pdst));                     \
-  ST_H(RTYPE, in1, (pdst) + stride);            \
+  ST_V(RTYPE, in0, (pdst));                     \
+  ST_V(RTYPE, in1, (pdst) + stride);            \
 }
 #define ST_SH2(...) ST_H2(v8i16, __VA_ARGS__)
 
@@ -1361,16 +1599,16 @@
    Details     : Each unsigned byte element from input vector 'in0' is
                  logically xor'ed with 128 and the result is stored in-place.
 */
-#define XORI_B2_128(RTYPE, in0, in1) {         \
-  in0 = (RTYPE)__msa_xori_b((v16u8)in0, 128);  \
-  in1 = (RTYPE)__msa_xori_b((v16u8)in1, 128);  \
+#define XORI_B2_128(RTYPE, in0, in1) {  \
+  in0 = (RTYPE)XORI_B(in0, 128);        \
+  in1 = (RTYPE)XORI_B(in1, 128);        \
 }
 #define XORI_B2_128_UB(...) XORI_B2_128(v16u8, __VA_ARGS__)
 #define XORI_B2_128_SB(...) XORI_B2_128(v16i8, __VA_ARGS__)
 
-#define XORI_B3_128(RTYPE, in0, in1, in2) {    \
-  XORI_B2_128(RTYPE, in0, in1);                \
-  in2 = (RTYPE)__msa_xori_b((v16u8)in2, 128);  \
+#define XORI_B3_128(RTYPE, in0, in1, in2) {  \
+  XORI_B2_128(RTYPE, in0, in1);              \
+  in2 = (RTYPE)XORI_B(in2, 128);             \
 }
 #define XORI_B3_128_SB(...) XORI_B3_128(v16i8, __VA_ARGS__)
 
@@ -1433,12 +1671,32 @@
    Details     : Each element of vector 'in0' is left shifted by 'shift' and
                  the result is written in-place.
 */
-#define SLLI_4V(in0, in1, in2, in3, shift) {  \
-  in0 = in0 << shift;                         \
-  in1 = in1 << shift;                         \
-  in2 = in2 << shift;                         \
-  in3 = in3 << shift;                         \
+#define SLL_2V(in0, in1, shift) {  \
+  in0 = in0 << shift;              \
+  in1 = in1 << shift;              \
 }
+#define SLL_4V(in0, in1, in2, in3, shift) {  \
+  SLL_2V(in0, in1, shift);                   \
+  SLL_2V(in2, in3, shift);                   \
+}
+
+/* Description : Shift left all elements of half-word vector
+   Arguments   : Inputs  - in0, in1, shift_val
+                 Outputs - in place operation
+                 Return Type - as per input vector RTYPE
+   Details     : Each element of vector 'in0' is left shifted by 'shift' and
+                 the result is written in-place.
+*/
+#define SLLI_H2(RTYPE, in0, in1, shift_val) {  \
+  in0 = (RTYPE)SLLI_H(in0, shift_val);         \
+  in1 = (RTYPE)SLLI_H(in1, shift_val);         \
+}
+
+#define SLLI_H4(RTYPE, in0, in1, in2, in3, shift_val) {  \
+    SLLI_H2(RTYPE, in0, in1, shift_val)                  \
+    SLLI_H2(RTYPE, in2, in3, shift_val)                  \
+}
+#define SLLI_H4_SH(...) SLLI_H4(v8i16, __VA_ARGS__)
 
 /* Description : Arithmetic shift right all elements of vector
                  (generic for all data types)
@@ -1454,6 +1712,43 @@
   in2 = in2 >> shift;                        \
   in3 = in3 >> shift;                        \
 }
+
+/* Description : Arithmetic shift right all elements of half-word vector
+   Arguments   : Inputs  - in0, in1, shift_val
+                 Outputs - in place operation
+                 Return Type - as per input vector RTYPE
+   Details     : Each element of vector 'in0' is right shifted by 'shift' and
+                 the result is written in-place. 'shift' is a GP variable.
+*/
+#define SRAI_H2(RTYPE, in0, in1, shift_val) {  \
+  in0 = (RTYPE)SRAI_H(in0, shift_val);         \
+  in1 = (RTYPE)SRAI_H(in1, shift_val);         \
+}
+#define SRAI_H2_SH(...) SRAI_H2(v8i16, __VA_ARGS__)
+
+#define SRAI_H4(RTYPE, in0, in1, in2, in3, shift_val) {  \
+  SRAI_H2(RTYPE, in0, in1, shift_val);                   \
+  SRAI_H2(RTYPE, in2, in3, shift_val);                   \
+}
+#define SRAI_H4_SH(...) SRAI_H4(v8i16, __VA_ARGS__)
+
+/* Description : Arithmetic shift right all elements of word vector
+   Arguments   : Inputs  - in0, in1, shift_val
+                 Outputs - in place operation
+                 Return Type - as per input vector RTYPE
+   Details     : Each element of vector 'in0' is right shifted by 'shift' and
+                 the result is written in-place. 'shift' is a GP variable.
+*/
+#define SRAI_W2(RTYPE, in0, in1, shift_val) {  \
+  in0 = (RTYPE)SRAI_W(in0, shift_val);         \
+  in1 = (RTYPE)SRAI_W(in1, shift_val);         \
+}
+
+#define SRAI_W4(RTYPE, in0, in1, in2, in3, shift_val) {  \
+  SRAI_W2(RTYPE, in0, in1, shift_val);                   \
+  SRAI_W2(RTYPE, in2, in3, shift_val);                   \
+}
+#define SRAI_W4_SW(...) SRAI_W4(v4i32, __VA_ARGS__)
 
 /* Description : Shift right arithmetic rounded words
    Arguments   : Inputs  - in0, in1, shift
@@ -1519,10 +1814,10 @@
                  the result is written in-place. 'shift' is an immediate value.
 */
 #define SRLI_H4(RTYPE, in0, in1, in2, in3, out0, out1, out2, out3, shift) {  \
-  out0 = (RTYPE)__msa_srli_h((v8i16)in0, shift);                             \
-  out1 = (RTYPE)__msa_srli_h((v8i16)in1, shift);                             \
-  out2 = (RTYPE)__msa_srli_h((v8i16)in2, shift);                             \
-  out3 = (RTYPE)__msa_srli_h((v8i16)in3, shift);                             \
+  out0 = (RTYPE)SRLI_H(in0, shift);                                          \
+  out1 = (RTYPE)SRLI_H(in1, shift);                                          \
+  out2 = (RTYPE)SRLI_H(in2, shift);                                          \
+  out3 = (RTYPE)SRLI_H(in3, shift);                                          \
 }
 #define SRLI_H4_SH(...) SRLI_H4(v8i16, __VA_ARGS__)
 
@@ -1558,6 +1853,25 @@
   ADD2(in4, in5, in6, in7, out2, out3);               \
 }
 
+/* Description : Addition of 2 pairs of half-word vectors
+   Arguments   : Inputs  - in0, in1, in2, in3
+                 Outputs - out0, out1
+   Details     : Each element in 'in0' is added to 'in1' and result is written
+                 to 'out0'.
+*/
+#define ADDVI_H2(RTYPE, in0, val0, in1, val1, out0, out1) {  \
+  out0 = (RTYPE)ADDVI_H(in0, val0);                          \
+  out1 = (RTYPE)ADDVI_H(in1, val1);                          \
+}
+#define ADDVI_H2_SH(...) ADDVI_H2(v8i16, __VA_ARGS__)
+
+#define ADDVI_H4(RTYPE, in0, val0, in1, val1, in2, val2,  \
+                 in3, val3, out0, out1, out2, out3) {     \
+  ADDVI_H2(RTYPE, in0, val0, in1, val1, out0, out1);      \
+  ADDVI_H2(RTYPE, in2, val2, in3, val3, out2, out3);      \
+}
+#define ADDVI_H4_SH(...) ADDVI_H4(v8i16, __VA_ARGS__)
+
 /* Description : Subtraction of 2 pairs of vectors
    Arguments   : Inputs  - in0, in1, in2, in3
                  Outputs - out0, out1
@@ -1587,7 +1901,7 @@
 #define UNPCK_R_SH_SW(in, out) {                 \
   v8i16 sign_m;                                  \
                                                  \
-  sign_m = __msa_clti_s_h((v8i16)in, 0);         \
+  sign_m = CLTI_S_H(in, 0);                      \
   out = (v4i32)__msa_ilvr_h(sign_m, (v8i16)in);  \
 }
 
@@ -1615,11 +1929,11 @@
                  Then interleaved left with same vector 'in0' to
                  generate 4 signed word elements in 'out1'
 */
-#define UNPCK_SH_SW(in, out0, out1) {    \
-  v8i16 tmp_m;                           \
-                                         \
-  tmp_m = __msa_clti_s_h((v8i16)in, 0);  \
-  ILVRL_H2_SW(tmp_m, in, out0, out1);    \
+#define UNPCK_SH_SW(in, out0, out1) {  \
+  v8i16 tmp_m;                         \
+                                       \
+  tmp_m = CLTI_S_H(in, 0);             \
+  ILVRL_H2_SW(tmp_m, in, out0, out1);  \
 }
 
 /* Description : Butterfly of 4 input vectors
@@ -1884,7 +2198,7 @@
   v16u8 out_m;                                           \
                                                          \
   out_m = (v16u8)__msa_pckev_b((v16i8)in1, (v16i8)in0);  \
-  out_m = (v16u8)__msa_xori_b((v16u8)out_m, 128);        \
+  out_m = (v16u8)XORI_B(out_m, 128);                     \
   out_m;                                                 \
 })
 

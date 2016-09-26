@@ -25,7 +25,7 @@ static void fadst16_cols_step1_msa(const int16_t *input, int32_t stride,
   r15 = LD_SH(input + 15 * stride);
   r7 = LD_SH(input + 7 * stride);
   r8 = LD_SH(input + 8 * stride);
-  SLLI_4V(r0, r15, r7, r8, 2);
+  SLLI_H4_SH(r0, r15, r7, r8, 2);
 
   /* stage 1 */
   LD_SW2(const0, 4, k0, k1);
@@ -36,7 +36,7 @@ static void fadst16_cols_step1_msa(const int16_t *input, int32_t stride,
   r4 = LD_SH(input + 4 * stride);
   r11 = LD_SH(input + 11 * stride);
   r12 = LD_SH(input + 12 * stride);
-  SLLI_4V(r3, r4, r11, r12, 2);
+  SLLI_H4_SH(r3, r4, r11, r12, 2);
 
   LD_SW2(const0 + 4 * 4, 4, k0, k1);
   LD_SW2(const0 + 4 * 6, 4, k2, k3);
@@ -58,7 +58,7 @@ static void fadst16_cols_step1_msa(const int16_t *input, int32_t stride,
   r6 = LD_SH(input + 6 * stride);
   r1 = LD_SH(input + stride);
   r14 = LD_SH(input + 14 * stride);
-  SLLI_4V(r9, r6, r1, r14, 2);
+  SLLI_H4_SH(r9, r6, r1, r14, 2);
 
   LD_SW2(const0 + 4 * 11, 4, k0, k1);
   LD_SW2(const0 + 4 * 13, 4, k2, k3);
@@ -70,7 +70,7 @@ static void fadst16_cols_step1_msa(const int16_t *input, int32_t stride,
   r2 = LD_SH(input + 2 * stride);
   r5 = LD_SH(input + 5 * stride);
   r10 = LD_SH(input + 10 * stride);
-  SLLI_4V(r13, r2, r5, r10, 2);
+  SLLI_H4_SH(r13, r2, r5, r10, 2);
 
   LD_SW2(const0 + 4 * 15, 4, k0, k1);
   LD_SW2(const0 + 4 * 17, 4, k2, k3);

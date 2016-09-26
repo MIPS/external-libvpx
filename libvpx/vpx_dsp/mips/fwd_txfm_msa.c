@@ -28,10 +28,10 @@ void fdct8x16_1d_column(const int16_t *input, int16_t *tmp_ptr,
   LD_SH16(input, src_stride,
           in0, in1, in2, in3, in4, in5, in6, in7,
           in8, in9, in10, in11, in12, in13, in14, in15);
-  SLLI_4V(in0, in1, in2, in3, 2);
-  SLLI_4V(in4, in5, in6, in7, 2);
-  SLLI_4V(in8, in9, in10, in11, 2);
-  SLLI_4V(in12, in13, in14, in15, 2);
+  SLLI_H4_SH(in0, in1, in2, in3, 2);
+  SLLI_H4_SH(in4, in5, in6, in7, 2);
+  SLLI_H4_SH(in8, in9, in10, in11, 2);
+  SLLI_H4_SH(in12, in13, in14, in15, 2);
   ADD4(in0, in15, in1, in14, in2, in13, in3, in12, tmp0, tmp1, tmp2, tmp3);
   ADD4(in4, in11, in5, in10, in6, in9, in7, in8, tmp4, tmp5, tmp6, tmp7);
   FDCT8x16_EVEN(tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7,
@@ -141,14 +141,14 @@ void fdct16x8_1d_row(int16_t *input, int16_t *output) {
                      in0, in1, in2, in3, in4, in5, in6, in7);
   TRANSPOSE8x8_SH_SH(in8, in9, in10, in11, in12, in13, in14, in15,
                      in8, in9, in10, in11, in12, in13, in14, in15);
-  ADD4(in0, 1, in1, 1, in2, 1, in3, 1, in0, in1, in2, in3);
-  ADD4(in4, 1, in5, 1, in6, 1, in7, 1, in4, in5, in6, in7);
-  ADD4(in8, 1, in9, 1, in10, 1, in11, 1, in8, in9, in10, in11);
-  ADD4(in12, 1, in13, 1, in14, 1, in15, 1, in12, in13, in14, in15);
-  SRA_4V(in0, in1, in2, in3, 2);
-  SRA_4V(in4, in5, in6, in7, 2);
-  SRA_4V(in8, in9, in10, in11, 2);
-  SRA_4V(in12, in13, in14, in15, 2);
+  ADDVI_H4_SH(in0, 1, in1, 1, in2, 1, in3, 1, in0, in1, in2, in3);
+  ADDVI_H4_SH(in4, 1, in5, 1, in6, 1, in7, 1, in4, in5, in6, in7);
+  ADDVI_H4_SH(in8, 1, in9, 1, in10, 1, in11, 1, in8, in9, in10, in11);
+  ADDVI_H4_SH(in12, 1, in13, 1, in14, 1, in15, 1, in12, in13, in14, in15);
+  SRAI_H4_SH(in0, in1, in2, in3, 2);
+  SRAI_H4_SH(in4, in5, in6, in7, 2);
+  SRAI_H4_SH(in8, in9, in10, in11, 2);
+  SRAI_H4_SH(in12, in13, in14, in15, 2);
   BUTTERFLY_16(in0, in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11,
                in12, in13, in14, in15, tmp0, tmp1, tmp2, tmp3, tmp4, tmp5,
                tmp6, tmp7, in8, in9, in10, in11, in12, in13, in14, in15);
@@ -179,10 +179,10 @@ void vpx_fdct4x4_msa(const int16_t *input, int16_t *output,
     v16i8 one = __msa_ldi_b(1);
 
     mask = (v8i16)__msa_sldi_b(zero, one, 15);
-    SLLI_4V(in0, in1, in2, in3, 4);
-    vec = __msa_ceqi_h(in0, 0);
-    vec = vec ^ 255;
-    vec = mask & vec;
+    SLLI_H4_SH(in0, in1, in2, in3, 4);
+    vec = CEQI_H(in0, 0);
+    vec = (v8i16)XORI_B(vec, 255);
+    vec &= mask;
     in0 += vec;
   }
 
@@ -190,8 +190,8 @@ void vpx_fdct4x4_msa(const int16_t *input, int16_t *output,
   TRANSPOSE4x4_SH_SH(in0, in1, in2, in3, in0, in1, in2, in3);
   VP9_FDCT4(in0, in1, in2, in3, in0, in1, in2, in3);
   TRANSPOSE4x4_SH_SH(in0, in1, in2, in3, in0, in1, in2, in3);
-  ADD4(in0, 1, in1, 1, in2, 1, in3, 1, in0, in1, in2, in3);
-  SRA_4V(in0, in1, in2, in3, 2);
+  ADDVI_H4_SH(in0, 1, in1, 1, in2, 1, in3, 1, in0, in1, in2, in3);
+  SRAI_H4_SH(in0, in1, in2, in3, 2);
   PCKEV_D2_SH(in1, in0, in3, in2, in0, in2);
   ST_SH2(in0, in2, output, 8);
 }
@@ -201,8 +201,8 @@ void vpx_fdct8x8_msa(const int16_t *input, int16_t *output,
   v8i16 in0, in1, in2, in3, in4, in5, in6, in7;
 
   LD_SH8(input, src_stride, in0, in1, in2, in3, in4, in5, in6, in7);
-  SLLI_4V(in0, in1, in2, in3, 2);
-  SLLI_4V(in4, in5, in6, in7, 2);
+  SLLI_H4_SH(in0, in1, in2, in3, 2);
+  SLLI_H4_SH(in4, in5, in6, in7, 2);
   VP9_FDCT8(in0, in1, in2, in3, in4, in5, in6, in7,
             in0, in1, in2, in3, in4, in5, in6, in7);
   TRANSPOSE8x8_SH_SH(in0, in1, in2, in3, in4, in5, in6, in7,

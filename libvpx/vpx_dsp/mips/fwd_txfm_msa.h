@@ -288,49 +288,43 @@
   out3 = DOT_SHIFT_RIGHT_PCK_H(vec0_m, vec1_m, cnst0_m);           \
 }
 
-#define FDCT_POSTPROC_2V_NEG_H(vec0, vec1) {      \
-  v8i16 tp0_m, tp1_m;                             \
-  v8i16 one_m = __msa_ldi_h(1);                   \
-                                                  \
-  tp0_m = __msa_clti_s_h(vec0, 0);                \
-  tp1_m = __msa_clti_s_h(vec1, 0);                \
-  vec0 += 1;                                      \
-  vec1 += 1;                                      \
-  tp0_m = one_m & tp0_m;                          \
-  tp1_m = one_m & tp1_m;                          \
-  vec0 += tp0_m;                                  \
-  vec1 += tp1_m;                                  \
-  vec0 >>= 2;                                     \
-  vec1 >>= 2;                                     \
+#define FDCT_POSTPROC_2V_NEG_H(vec0, vec1) {   \
+  v8i16 tp0_m, tp1_m;                          \
+  v8i16 one_m = __msa_ldi_h(1);                \
+                                               \
+  tp0_m = CLTI_S_H(vec0, 0);                   \
+  tp1_m = CLTI_S_H(vec1, 0);                   \
+  ADDVI_H2_SH(vec0, 1, vec1, 1, vec0, vec1);   \
+  tp0_m &= one_m;                              \
+  tp1_m &= one_m;                              \
+  ADD2(vec0, tp0_m, vec1, tp1_m, vec0, vec1);  \
+  SRAI_H2_SH(vec0, vec1, 2);                   \
 }
 
-#define FDCT32_POSTPROC_NEG_W(vec) {      \
-  v4i32 temp_m;                           \
-  v4i32 one_m = __msa_ldi_w(1);           \
-                                          \
-  temp_m = __msa_clti_s_w(vec, 0);        \
-  vec += 1;                               \
-  temp_m = one_m & temp_m;                \
-  vec += temp_m;                          \
-  vec >>= 2;                              \
+#define FDCT32_POSTPROC_NEG_W(vec) {  \
+  v4i32 temp_m;                       \
+  v4i32 one_m = __msa_ldi_w(1);       \
+                                      \
+  temp_m = CLTI_S_W(vec, 0);          \
+  vec = ADDVI_H(vec, 1);              \
+  temp_m &= one_m;                    \
+  vec += temp_m;                      \
+  vec = SRAI_H(vec, 2);               \
 }
 
-#define FDCT32_POSTPROC_2V_POS_H(vec0, vec1) {      \
-  v8i16 tp0_m, tp1_m;                               \
-  v8i16 one = __msa_ldi_h(1);                       \
-                                                    \
-  tp0_m = __msa_clei_s_h(vec0, 0);                  \
-  tp1_m = __msa_clei_s_h(vec1, 0);                  \
-  tp0_m = (v8i16)__msa_xori_b((v16u8)tp0_m, 255);   \
-  tp1_m = (v8i16)__msa_xori_b((v16u8)tp1_m, 255);   \
-  vec0 += 1;                                        \
-  vec1 += 1;                                        \
-  tp0_m = one & tp0_m;                              \
-  tp1_m = one & tp1_m;                              \
-  vec0 += tp0_m;                                    \
-  vec1 += tp1_m;                                    \
-  vec0 >>= 2;                                       \
-  vec1 >>= 2;                                       \
+#define FDCT32_POSTPROC_2V_POS_H(vec0, vec1) {  \
+  v8i16 tp0_m, tp1_m;                           \
+  v8i16 one = __msa_ldi_h(1);                   \
+                                                \
+  tp0_m = CLEI_S_H(vec0, 0);                    \
+  tp1_m = CLEI_S_H(vec1, 0);                    \
+  tp0_m = (v8i16)XORI_B(tp0_m, 255);            \
+  tp1_m = (v8i16)XORI_B(tp1_m, 255);            \
+  ADDVI_H2_SH(vec0, 1, vec1, 1, vec0, vec1);    \
+  tp0_m &= one;                                 \
+  tp1_m &= one;                                 \
+  ADD2(vec0, tp0_m, vec1, tp1_m, vec0, vec1);   \
+  SRAI_H2_SH(vec0, vec1, 2);                    \
 }
 
 #define DOTP_CONST_PAIR_W(reg0_left, reg1_left, reg0_right,      \

@@ -2,7 +2,16 @@
 # libvpx_config_dir_mips64
 # libvpx_codec_srcs_c_mips64
 
-libvpx_target := config/generic
+ifneq ($(ARCH_HAS_BIGENDIAN),true)
+  ifeq ($(ARCH_MIPS_HAS_MSA),true)
+    libvpx_target := config/mips64-msa
+    LOCAL_CFLAGS_mips64 += -mfp64 -mmsa
+  else
+    libvpx_target := config/mips64
+  endif
+else
+  libvpx_target := config/generic
+endif
 
 libvpx_config_dir_mips64 := $(LOCAL_PATH)/$(libvpx_target)
 libvpx_codec_srcs := $(sort $(shell cat $(libvpx_config_dir_mips64)/libvpx_srcs.txt))

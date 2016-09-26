@@ -113,7 +113,7 @@ void vpx_hz_lpf_t16_16w(uint8_t *src, int32_t pitch, uint8_t *filter48) {
 
     q0_r_in = (v8u16)__msa_ilvr_b(zero, (v16i8)q0);
 
-    tmp0_r = p7_r_in << 3;
+    tmp0_r = (v8u16)SLLI_H(p7_r_in, 3);
     tmp0_r -= p7_r_in;
     tmp0_r += p6_r_in;
     tmp0_r += q0_r_in;
@@ -132,7 +132,7 @@ void vpx_hz_lpf_t16_16w(uint8_t *src, int32_t pitch, uint8_t *filter48) {
                p1_l_in, p0_l_in);
     q0_l_in = (v8u16)__msa_ilvl_b(zero, (v16i8)q0);
 
-    tmp0_l = p7_l_in << 3;
+    tmp0_l = (v8u16)SLLI_H(p7_l_in, 3);
     tmp0_l -= p7_l_in;
     tmp0_l += p6_l_in;
     tmp0_l += q0_l_in;
@@ -508,7 +508,7 @@ void vpx_lpf_horizontal_16_msa(uint8_t *src, int32_t pitch,
                    zero, q6, zero, q7, p7_r, p6_r, p5_r, p4_r, q4_r, q5_r, q6_r,
                    q7_r);
 
-        tmp0 = p7_r << 3;
+        tmp0 = (v8u16)SLLI_H(p7_r, 3);
         tmp0 -= p7_r;
         tmp0 += p6_r;
         tmp0 += q0_r;
@@ -855,7 +855,7 @@ int32_t vpx_vt_lpf_t16_8w(uint8_t *src, uint8_t *src_org, int32_t pitch,
                p3_r_in, p2_r_in, p1_r_in, p0_r_in);
     q0_r_in = (v8u16)__msa_ilvr_b(zero, (v16i8)q0);
 
-    tmp0_r = p7_r_in << 3;
+    tmp0_r = (v8u16)SLLI_H(p7_r_in, 3);
     tmp0_r -= p7_r_in;
     tmp0_r += p6_r_in;
     tmp0_r += q0_r_in;
@@ -1187,7 +1187,7 @@ int32_t vpx_vt_lpf_t16_16w(uint8_t *src, uint8_t *src_org, int32_t pitch,
                p3_r_in, p2_r_in, p1_r_in, p0_r_in);
     q0_r_in = (v8u16)__msa_ilvr_b(zero, (v16i8)q0);
 
-    tmp0_r = p7_r_in << 3;
+    tmp0_r = (v8u16)SLLI_H(p7_r_in, 3);
     tmp0_r -= p7_r_in;
     tmp0_r += p6_r_in;
     tmp0_r += q0_r_in;
@@ -1206,7 +1206,7 @@ int32_t vpx_vt_lpf_t16_16w(uint8_t *src, uint8_t *src_org, int32_t pitch,
                p1_l_in, p0_l_in);
     q0_l_in = (v8u16)__msa_ilvl_b(zero, (v16i8)q0);
 
-    tmp0_l = p7_l_in << 3;
+    tmp0_l = (v8u16)SLLI_H(p7_l_in, 3);
     tmp0_l -= p7_l_in;
     tmp0_l += p6_l_in;
     tmp0_l += q0_l_in;

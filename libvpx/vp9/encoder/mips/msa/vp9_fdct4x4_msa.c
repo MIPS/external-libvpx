@@ -21,7 +21,8 @@ void vp9_fwht4x4_msa(const int16_t *input, int16_t *output,
 
   in0 += in1;
   in3 -= in2;
-  in4 = (in0 - in3) >> 1;
+  in4 = (in0 - in3);
+  in4 = SRAI_H(in4, 1);
   SUB2(in4, in1, in4, in2, in1, in2);
   in0 -= in2;
   in3 += in1;
@@ -30,12 +31,13 @@ void vp9_fwht4x4_msa(const int16_t *input, int16_t *output,
 
   in0 += in2;
   in1 -= in3;
-  in4 = (in0 - in1) >> 1;
+  in4 = (in0 - in1);
+  in4 = SRAI_H(in4, 1);
   SUB2(in4, in2, in4, in3, in2, in3);
   in0 -= in3;
   in1 += in2;
 
-  SLLI_4V(in0, in1, in2, in3, 2);
+  SLLI_H4_SH(in0, in1, in2, in3, 2);
 
   TRANSPOSE4x4_SH_SH(in0, in3, in1, in2, in0, in3, in1, in2);
 
@@ -58,9 +60,9 @@ void vp9_fht4x4_msa(const int16_t *input, int16_t *output, int32_t stride,
     v16i8 one = __msa_ldi_b(1);
 
     mask = (v8i16)__msa_sldi_b(zero, one, 15);
-    SLLI_4V(in0, in1, in2, in3, 4);
-    temp = __msa_ceqi_h(in0, 0);
-    temp = (v8i16)__msa_xori_b((v16u8)temp, 255);
+    SLLI_H4_SH(in0, in1, in2, in3, 4);
+    temp = CEQI_H(in0, 0);
+    temp = (v8i16)XORI_B(temp, 255);
     temp = mask & temp;
     in0 += temp;
   }
@@ -92,8 +94,8 @@ void vp9_fht4x4_msa(const int16_t *input, int16_t *output, int32_t stride,
   }
 
   TRANSPOSE4x4_SH_SH(in0, in1, in2, in3, in0, in1, in2, in3);
-  ADD4(in0, 1, in1, 1, in2, 1, in3, 1, in0, in1, in2, in3);
-  SRA_4V(in0, in1, in2, in3, 2);
+  ADDVI_H4_SH(in0, 1, in1, 1, in2, 1, in3, 1, in0, in1, in2, in3);
+  SRAI_H4_SH(in0, in1, in2, in3, 2);
   PCKEV_D2_SH(in1, in0, in3, in2, in0, in2);
   ST_SH2(in0, in2, output, 8);
 }
