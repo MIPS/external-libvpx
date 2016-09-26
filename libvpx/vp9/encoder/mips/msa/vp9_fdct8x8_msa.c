@@ -18,8 +18,8 @@ void vp9_fht8x8_msa(const int16_t *input, int16_t *output, int32_t stride,
   v8i16 in0, in1, in2, in3, in4, in5, in6, in7;
 
   LD_SH8(input, stride, in0, in1, in2, in3, in4, in5, in6, in7);
-  SLLI_4V(in0, in1, in2, in3, 2);
-  SLLI_4V(in4, in5, in6, in7, 2);
+  SLLI_H4_SH(in0, in1, in2, in3, 2);
+  SLLI_H4_SH(in4, in5, in6, in7, 2);
 
   switch (tx_type) {
     case DCT_DCT:

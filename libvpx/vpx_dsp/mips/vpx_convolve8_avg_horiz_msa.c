@@ -29,9 +29,9 @@ static void common_hz_8t_and_aver_dst_4x4_msa(const uint8_t *src,
   filt = LD_SH(filter);
   SPLATI_H4_SB(filt, 0, 1, 2, 3, filt0, filt1, filt2, filt3);
 
-  mask1 = mask0 + 2;
-  mask2 = mask0 + 4;
-  mask3 = mask0 + 6;
+  mask1 = (v16u8)ADDVI_B(mask0, 2);
+  mask2 = (v16u8)ADDVI_B(mask0, 4);
+  mask3 = (v16u8)ADDVI_B(mask0, 6);
 
   LD_SB4(src, src_stride, src0, src1, src2, src3);
   XORI_B4_128_SB(src0, src1, src2, src3);
@@ -64,9 +64,9 @@ static void common_hz_8t_and_aver_dst_4x8_msa(const uint8_t *src,
   filt = LD_SH(filter);
   SPLATI_H4_SB(filt, 0, 1, 2, 3, filt0, filt1, filt2, filt3);
 
-  mask1 = mask0 + 2;
-  mask2 = mask0 + 4;
-  mask3 = mask0 + 6;
+  mask1 = (v16u8)ADDVI_B(mask0, 2);
+  mask2 = (v16u8)ADDVI_B(mask0, 4);
+  mask3 = (v16u8)ADDVI_B(mask0, 6);
 
   LD_SB4(src, src_stride, src0, src1, src2, src3);
   XORI_B4_128_SB(src0, src1, src2, src3);
@@ -122,9 +122,9 @@ static void common_hz_8t_and_aver_dst_8w_msa(const uint8_t *src,
   filt = LD_SH(filter);
   SPLATI_H4_SB(filt, 0, 1, 2, 3, filt0, filt1, filt2, filt3);
 
-  mask1 = mask0 + 2;
-  mask2 = mask0 + 4;
-  mask3 = mask0 + 6;
+  mask1 = (v16u8)ADDVI_B(mask0, 2);
+  mask2 = (v16u8)ADDVI_B(mask0, 4);
+  mask3 = (v16u8)ADDVI_B(mask0, 6);
 
   for (loop_cnt = (height >> 2); loop_cnt--;) {
     LD_SB4(src, src_stride, src0, src1, src2, src3);
@@ -162,9 +162,9 @@ static void common_hz_8t_and_aver_dst_16w_msa(const uint8_t *src,
   filt = LD_SH(filter);
   SPLATI_H4_SB(filt, 0, 1, 2, 3, filt0, filt1, filt2, filt3);
 
-  mask1 = mask0 + 2;
-  mask2 = mask0 + 4;
-  mask3 = mask0 + 6;
+  mask1 = (v16u8)ADDVI_B(mask0, 2);
+  mask2 = (v16u8)ADDVI_B(mask0, 4);
+  mask3 = (v16u8)ADDVI_B(mask0, 6);
 
   for (loop_cnt = height >> 1; loop_cnt--;) {
     LD_SB2(src, src_stride, src0, src2);
@@ -218,9 +218,9 @@ static void common_hz_8t_and_aver_dst_32w_msa(const uint8_t *src,
   filt = LD_SH(filter);
   SPLATI_H4_SB(filt, 0, 1, 2, 3, filt0, filt1, filt2, filt3);
 
-  mask1 = mask0 + 2;
-  mask2 = mask0 + 4;
-  mask3 = mask0 + 6;
+  mask1 = (v16u8)ADDVI_B(mask0, 2);
+  mask2 = (v16u8)ADDVI_B(mask0, 4);
+  mask3 = (v16u8)ADDVI_B(mask0, 6);
 
   for (loop_cnt = height; loop_cnt--;) {
     src0 = LD_SB(src);
@@ -275,9 +275,9 @@ static void common_hz_8t_and_aver_dst_64w_msa(const uint8_t *src,
   filt = LD_SH(filter);
   SPLATI_H4_SB(filt, 0, 1, 2, 3, filt0, filt1, filt2, filt3);
 
-  mask1 = mask0 + 2;
-  mask2 = mask0 + 4;
-  mask3 = mask0 + 6;
+  mask1 = (v16u8)ADDVI_B(mask0, 2);
+  mask2 = (v16u8)ADDVI_B(mask0, 4);
+  mask3 = (v16u8)ADDVI_B(mask0, 6);
 
   for (loop_cnt = height; loop_cnt--;) {
     for (cnt = 0; cnt < 2; ++cnt) {

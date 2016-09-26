@@ -44,8 +44,8 @@ static int8_t fast_quantize_b_msa(int16_t *coeff_ptr, int16_t *zbin,
     LD_SH2(quant, 8, coeff0, coeff1);
     VSHF_H2_SH(coeff0, coeff1, coeff0, coeff1, zigzag_mask0, zigzag_mask1,
                quant0, quant2);
-    sign_z0 = z0 >> 15;
-    sign_z1 = z1 >> 15;
+    sign_z0 = SRAI_H(z0, 15);
+    sign_z1 = SRAI_H(z1, 15);
     x0 = __msa_add_a_h(z0, zero);
     x1 = __msa_add_a_h(z1, zero);
     ILVL_H2_SH(quant0, quant0, quant2, quant2, quant1, quant3);
@@ -54,7 +54,7 @@ static int8_t fast_quantize_b_msa(int16_t *coeff_ptr, int16_t *zbin,
     ILVR_H2_SH(round0, x0, round1, x1, temp0_h, temp2_h);
     DOTP_SH4_SW(temp0_h, temp1_h, temp2_h, temp3_h, quant0, quant1, quant2,
                 quant3, temp0_w, temp1_w, temp2_w, temp3_w);
-    SRA_4V(temp0_w, temp1_w, temp2_w, temp3_w, 16);
+    SRAI_W4_SW(temp0_w, temp1_w, temp2_w, temp3_w, 16);
     PCKEV_H2_SH(temp1_w, temp0_w, temp3_w, temp2_w, x0, x1);
     x0 = x0 ^ sign_z0;
     x1 = x1 ^ sign_z1;
@@ -128,8 +128,8 @@ static int8_t exact_regular_quantize_b_msa(int16_t *zbin_boost,
     LD_SH2(zbin, 8, coeff0, coeff1);
     VSHF_H2_SH(coeff0, coeff1, coeff0, coeff1, zigzag_mask0, zigzag_mask1,
                z_bin0, z_bin1);
-    sign_z0 = z0 >> 15;
-    sign_z1 = z1 >> 15;
+    sign_z0 = SRAI_H(z0, 15);
+    sign_z1 = SRAI_H(z1, 15);
     x0 = __msa_add_a_h(z0, zero);
     x1 = __msa_add_a_h(z1, zero);
     SUB2(x0, z_bin0, x1, z_bin1, z_bin0, z_bin1);
@@ -140,7 +140,7 @@ static int8_t exact_regular_quantize_b_msa(int16_t *zbin_boost,
     ILVR_H2_SH(round0, x0, round1, x1, temp0_h, temp2_h);
     DOTP_SH4_SW(temp0_h, temp1_h, temp2_h, temp3_h, quant0, quant1, quant2,
                 quant3, temp0_w, temp1_w, temp2_w, temp3_w);
-    SRA_4V(temp0_w, temp1_w, temp2_w, temp3_w, 16);
+    SRAI_W4_SW(temp0_w, temp1_w, temp2_w, temp3_w, 16);
     PCKEV_H2_SH(temp1_w, temp0_w, temp3_w, temp2_w, temp0_h, temp2_h);
     LD_SH2(quant_shift, 8, coeff0, coeff1);
     VSHF_H2_SH(coeff0, coeff1, coeff0, coeff1, zigzag_mask0, zigzag_mask1,
@@ -152,7 +152,7 @@ static int8_t exact_regular_quantize_b_msa(int16_t *zbin_boost,
     ILVR_H2_SH(temp0_h, x0, temp2_h, x1, temp0_h, temp2_h);
     DOTP_SH4_SW(temp0_h, temp1_h, temp2_h, temp3_h, quant0, quant1, quant2,
                 quant3, temp0_w, temp1_w, temp2_w, temp3_w);
-    SRA_4V(temp0_w, temp1_w, temp2_w, temp3_w, 16);
+    SRAI_W4_SW(temp0_w, temp1_w, temp2_w, temp3_w, 16);
     PCKEV_H2_SH(temp1_w, temp0_w, temp3_w, temp2_w, x0, x1);
     sign_x0 = x0 ^ sign_z0;
     sign_x1 = x1 ^ sign_z1;

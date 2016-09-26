@@ -23,10 +23,10 @@ static void fdct8x32_1d_column_load_butterfly(const int16_t *input,
   LD_SH4(input + (28 * src_stride), src_stride, in4, in5, in6, in7);
   LD_SH4(input + (4 * src_stride), src_stride, in0_1, in1_1, in2_1, in3_1);
   LD_SH4(input + (24 * src_stride), src_stride, in4_1, in5_1, in6_1, in7_1);
-  SLLI_4V(in0, in1, in2, in3, 2);
-  SLLI_4V(in4, in5, in6, in7, 2);
-  SLLI_4V(in0_1, in1_1, in2_1, in3_1, 2);
-  SLLI_4V(in4_1, in5_1, in6_1, in7_1, 2);
+  SLLI_H4_SH(in0, in1, in2, in3, 2);
+  SLLI_H4_SH(in4, in5, in6, in7, 2);
+  SLLI_H4_SH(in0_1, in1_1, in2_1, in3_1, 2);
+  SLLI_H4_SH(in4_1, in5_1, in6_1, in7_1, 2);
   BUTTERFLY_8(in0, in1, in2, in3, in4, in5, in6, in7,
               step0, step1, step2, step3, in4, in5, in6, in7);
   BUTTERFLY_8(in0_1, in1_1, in2_1, in3_1, in4_1, in5_1, in6_1, in7_1,
@@ -41,10 +41,10 @@ static void fdct8x32_1d_column_load_butterfly(const int16_t *input,
   LD_SH4(input + (20 * src_stride), src_stride, in4, in5, in6, in7);
   LD_SH4(input + (12 * src_stride), src_stride, in0_1, in1_1, in2_1, in3_1);
   LD_SH4(input + (16 * src_stride), src_stride, in4_1, in5_1, in6_1, in7_1);
-  SLLI_4V(in0, in1, in2, in3, 2);
-  SLLI_4V(in4, in5, in6, in7, 2);
-  SLLI_4V(in0_1, in1_1, in2_1, in3_1, 2);
-  SLLI_4V(in4_1, in5_1, in6_1, in7_1, 2);
+  SLLI_H4_SH(in0, in1, in2, in3, 2);
+  SLLI_H4_SH(in4, in5, in6, in7, 2);
+  SLLI_H4_SH(in0_1, in1_1, in2_1, in3_1, 2);
+  SLLI_H4_SH(in4_1, in5_1, in6_1, in7_1, 2);
   BUTTERFLY_8(in0, in1, in2, in3, in4, in5, in6, in7,
               step0, step1, step2, step3, in4, in5, in6, in7);
   BUTTERFLY_8(in0_1, in1_1, in2_1, in3_1, in4_1, in5_1, in6_1, in7_1,

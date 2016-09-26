@@ -33,10 +33,10 @@ static const int32_t sinpi8sqrt2 = 35468;
     v4i32 sinpi8_sqrt2_m = __msa_fill_w(sinpi8sqrt2);     \
                                                           \
     ILVRL_H2_SW(in, zero_m, tmp1_m, tmp2_m);              \
-    tmp1_m >>= 16;                                        \
-    tmp2_m >>= 16;                                        \
-    tmp1_m = (tmp1_m * sinpi8_sqrt2_m) >> 16;             \
-    tmp2_m = (tmp2_m * sinpi8_sqrt2_m) >> 16;             \
+    SRAI_W2_SW(tmp1_m, tmp2_m, 16);                       \
+    tmp1_m = (tmp1_m * sinpi8_sqrt2_m);                   \
+    tmp2_m = (tmp2_m * sinpi8_sqrt2_m);                   \
+    SRAI_W2_SW(tmp1_m, tmp2_m, 16);                       \
     out_m = __msa_pckev_h((v8i16)tmp2_m, (v8i16)tmp1_m);  \
                                                           \
     out_m;                                                \
@@ -53,11 +53,11 @@ static const int32_t sinpi8sqrt2 = 35468;
     b1_m = in0 - in2;                                              \
     c_tmp1_m = EXPAND_TO_H_MULTIPLY_SINPI8SQRT2_PCK_TO_W(in1);     \
     c_tmp2_m = __msa_mul_q_h(in3, const_cospi8sqrt2minus1_m);      \
-    c_tmp2_m = c_tmp2_m >> 1;                                      \
+    c_tmp2_m = SRAI_H(c_tmp2_m, 1);                                \
     c_tmp2_m = in3 + c_tmp2_m;                                     \
     c1_m = c_tmp1_m - c_tmp2_m;                                    \
     d_tmp1_m = __msa_mul_q_h(in1, const_cospi8sqrt2minus1_m);      \
-    d_tmp1_m = d_tmp1_m >> 1;                                      \
+    d_tmp1_m = SRAI_H(d_tmp1_m, 1);                                \
     d_tmp1_m = in1 + d_tmp1_m;                                     \
     d_tmp2_m = EXPAND_TO_H_MULTIPLY_SINPI8SQRT2_PCK_TO_W(in3);     \
     d1_m = d_tmp1_m + d_tmp2_m;                                    \
@@ -74,11 +74,13 @@ static const int32_t sinpi8sqrt2 = 35468;
     sinpi8_sqrt2_m = __msa_fill_w(sinpi8sqrt2);                    \
     a1_m = in0 + in2;                                              \
     b1_m = in0 - in2;                                              \
-    c_tmp1_m = (in1 * sinpi8_sqrt2_m) >> 16;                       \
-    c_tmp2_m = in3 + ((in3 * const_cospi8sqrt2minus1_m) >> 16);    \
+    c_tmp1_m = SRAI_W((in1 * sinpi8_sqrt2_m), 16);                 \
+    c_tmp2_m = SRAI_W((in3 * const_cospi8sqrt2minus1_m), 16);      \
+    c_tmp2_m += in3;                                               \
     c1_m = c_tmp1_m - c_tmp2_m;                                    \
-    d_tmp1_m = in1 + ((in1 * const_cospi8sqrt2minus1_m) >> 16);    \
-    d_tmp2_m = (in3 * sinpi8_sqrt2_m) >> 16;                       \
+    d_tmp1_m = SRAI_W((in1 * const_cospi8sqrt2minus1_m), 16);      \
+    d_tmp1_m += in1;                                               \
+    d_tmp2_m = SRAI_W((in3 * sinpi8_sqrt2_m), 16);                 \
     d1_m = d_tmp1_m + d_tmp2_m;                                    \
     BUTTERFLY_4(a1_m, b1_m, c1_m, d1_m, out0, out1, out2, out3);   \
 }
@@ -156,8 +158,8 @@ void vp8_short_inv_walsh4x4_msa(int16_t *input, int16_t *mb_dq_coeff)
     TRANSPOSE4x4_SW_SW(hz0, hz1, hz2, hz3, hz0, hz1, hz2, hz3);
     BUTTERFLY_4(hz0, hz1, hz2, hz3, a1, b1, c1, d1);
     BUTTERFLY_4(a1, d1, c1, b1, vt0, vt1, vt3, vt2);
-    ADD4(vt0, 3, vt1, 3, vt2, 3, vt3, 3, vt0, vt1, vt2, vt3);
-    SRA_4V(vt0, vt1, vt2, vt3, 3);
+    ADDVI_W4_SW(vt0, 3, vt1, 3, vt2, 3, vt3, 3, vt0, vt1, vt2, vt3);
+    SRAI_W4_SW(vt0, vt1, vt2, vt3, 3);
     mb_dq_coeff[0] = __msa_copy_s_h((v8i16)vt0, 0);
     mb_dq_coeff[16] = __msa_copy_s_h((v8i16)vt1, 0);
     mb_dq_coeff[32] = __msa_copy_s_h((v8i16)vt2, 0);

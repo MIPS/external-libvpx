@@ -153,8 +153,8 @@ static void common_hz_6t_4x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter);
     SPLATI_H3_SB(filt, 0, 1, 2, filt0, filt1, filt2);
 
-    mask1 = mask0 + 2;
-    mask2 = mask0 + 4;
+    mask1 = (v16u8)ADDVI_B(mask0, 2);
+    mask2 = (v16u8)ADDVI_B(mask0, 4);
 
     LD_SB4(src, src_stride, src0, src1, src2, src3);
     XORI_B4_128_SB(src0, src1, src2, src3);
@@ -180,8 +180,8 @@ static void common_hz_6t_4x8_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter);
     SPLATI_H3_SB(filt, 0, 1, 2, filt0, filt1, filt2);
 
-    mask1 = mask0 + 2;
-    mask2 = mask0 + 4;
+    mask1 = (v16u8)ADDVI_B(mask0, 2);
+    mask2 = (v16u8)ADDVI_B(mask0, 4);
 
     LD_SB4(src, src_stride, src0, src1, src2, src3);
     XORI_B4_128_SB(src0, src1, src2, src3);
@@ -230,8 +230,8 @@ static void common_hz_6t_8w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter);
     SPLATI_H3_SB(filt, 0, 1, 2, filt0, filt1, filt2);
 
-    mask1 = mask0 + 2;
-    mask2 = mask0 + 4;
+    mask1 = (v16u8)ADDVI_B(mask0, 2);
+    mask2 = (v16u8)ADDVI_B(mask0, 4);
 
     LD_SB4(src, src_stride, src0, src1, src2, src3);
     XORI_B4_128_SB(src0, src1, src2, src3);
@@ -276,8 +276,8 @@ static void common_hz_6t_16w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter);
     SPLATI_H3_SB(filt, 0, 1, 2, filt0, filt1, filt2);
 
-    mask1 = mask0 + 2;
-    mask2 = mask0 + 4;
+    mask1 = (v16u8)ADDVI_B(mask0, 2);
+    mask2 = (v16u8)ADDVI_B(mask0, 4);
 
     for (loop_cnt = (height >> 2); loop_cnt--;)
     {
@@ -494,8 +494,8 @@ static void common_hv_6ht_6vt_4w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter_vert);
     SPLATI_H3_SH(filt, 0, 1, 2, filt_vt0, filt_vt1, filt_vt2);
 
-    mask1 = mask0 + 2;
-    mask2 = mask0 + 4;
+    mask1 = (v16u8)ADDVI_B(mask0, 2);
+    mask2 = (v16u8)ADDVI_B(mask0, 4);
 
     LD_SB5(src, src_stride, src0, src1, src2, src3, src4);
     src += (5 * src_stride);
@@ -567,8 +567,8 @@ static void common_hv_6ht_6vt_8w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter_horiz);
     SPLATI_H3_SB(filt, 0, 1, 2, filt_hz0, filt_hz1, filt_hz2);
 
-    mask1 = mask0 + 2;
-    mask2 = mask0 + 4;
+    mask1 = (v16u8)ADDVI_B(mask0, 2);
+    mask2 = (v16u8)ADDVI_B(mask0, 4);
 
     LD_SB5(src, src_stride, src0, src1, src2, src3, src4);
     src += (5 * src_stride);
@@ -662,7 +662,7 @@ static void common_hz_4t_4x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter);
     SPLATI_H2_SB(filt, 0, 1, filt0, filt1);
 
-    mask1 = mask0 + 2;
+    mask1 = ADDVI_B(mask0, 2);
 
     LD_SB4(src, src_stride, src0, src1, src2, src3);
     XORI_B4_128_SB(src0, src1, src2, src3);
@@ -688,7 +688,7 @@ static void common_hz_4t_4x8_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter);
     SPLATI_H2_SB(filt, 0, 1, filt0, filt1);
 
-    mask1 = mask0 + 2;
+    mask1 = ADDVI_B(mask0, 2);
 
     LD_SB4(src, src_stride, src0, src1, src2, src3);
     src += (4 * src_stride);
@@ -738,7 +738,7 @@ static void common_hz_4t_8w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter);
     SPLATI_H2_SB(filt, 0, 1, filt0, filt1);
 
-    mask1 = mask0 + 2;
+    mask1 = ADDVI_B(mask0, 2);
 
     for (loop_cnt = (height >> 2); loop_cnt--;)
     {
@@ -773,7 +773,7 @@ static void common_hz_4t_16w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter);
     SPLATI_H2_SB(filt, 0, 1, filt0, filt1);
 
-    mask1 = mask0 + 2;
+    mask1 = ADDVI_B(mask0, 2);
 
     for (loop_cnt = (height >> 2); loop_cnt--;)
     {
@@ -827,7 +827,7 @@ static void common_vt_4t_4w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     ILVR_B2_SB(src1, src0, src2, src1, src10_r, src21_r);
 
     src2110 = (v16i8)__msa_ilvr_d((v2i64)src21_r, (v2i64)src10_r);
-    src2110 = (v16i8)__msa_xori_b((v16u8)src2110, 128);
+    src2110 = (v16i8)XORI_B(src2110, 128);
 
     for (loop_cnt = (height >> 2); loop_cnt--;)
     {
@@ -835,14 +835,14 @@ static void common_vt_4t_4w_msa(uint8_t *RESTRICT src, int32_t src_stride,
         src += (3 * src_stride);
         ILVR_B2_SB(src3, src2, src4, src3, src32_r, src43_r);
         src4332 = (v16i8)__msa_ilvr_d((v2i64)src43_r, (v2i64)src32_r);
-        src4332 = (v16i8)__msa_xori_b((v16u8)src4332, 128);
+        src4332 = (v16i8)XORI_B(src4332, 128);
         out10 = FILT_4TAP_DPADD_S_H(src2110, src4332, filt0, filt1);
 
         src2 = LD_SB(src);
         src += (src_stride);
         ILVR_B2_SB(src5, src4, src2, src5, src54_r, src65_r);
         src2110 = (v16i8)__msa_ilvr_d((v2i64)src65_r, (v2i64)src54_r);
-        src2110 = (v16i8)__msa_xori_b((v16u8)src2110, 128);
+        src2110 = (v16i8)XORI_B(src2110, 128);
         out32 = FILT_4TAP_DPADD_S_H(src4332, src2110, filt0, filt1);
         SRARI_H2_SH(out10, out32, VP8_FILTER_SHIFT);
         SAT_SH2_SH(out10, out32, 7);
@@ -975,7 +975,7 @@ static void common_hv_4ht_4vt_4w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter_horiz);
     SPLATI_H2_SB(filt, 0, 1, filt_hz0, filt_hz1);
 
-    mask1 = mask0 + 2;
+    mask1 = (v16u8)ADDVI_B(mask0, 2);
 
     LD_SB3(src, src_stride, src0, src1, src2);
     src += (3 * src_stride);
@@ -1035,7 +1035,7 @@ static void common_hv_4ht_4vt_8w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter_horiz);
     SPLATI_H2_SB(filt, 0, 1, filt_hz0, filt_hz1);
 
-    mask1 = mask0 + 2;
+    mask1 = (v16u8)ADDVI_B(mask0, 2);
 
     LD_SB3(src, src_stride, src0, src1, src2);
     src += (3 * src_stride);
@@ -1118,8 +1118,8 @@ static void common_hv_6ht_4vt_4w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter_horiz);
     SPLATI_H3_SB(filt, 0, 1, 2, filt_hz0, filt_hz1, filt_hz2);
 
-    mask1 = mask0 + 2;
-    mask2 = mask0 + 4;
+    mask1 = (v16u8)ADDVI_B(mask0, 2);
+    mask2 = (v16u8)ADDVI_B(mask0, 4);
 
     LD_SB3(src, src_stride, src0, src1, src2);
     src += (3 * src_stride);
@@ -1183,8 +1183,8 @@ static void common_hv_6ht_4vt_8w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter_horiz);
     SPLATI_H3_SB(filt, 0, 1, 2, filt_hz0, filt_hz1, filt_hz2);
 
-    mask1 = mask0 + 2;
-    mask2 = mask0 + 4;
+    mask1 = ADDVI_B(mask0, 2);
+    mask2 = ADDVI_B(mask0, 4);
 
     LD_SB3(src, src_stride, src0, src1, src2);
     src += (3 * src_stride);
@@ -1274,7 +1274,7 @@ static void common_hv_4ht_6vt_4w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter_horiz);
     SPLATI_H2_SB(filt, 0, 1, filt_hz0, filt_hz1);
 
-    mask1 = mask0 + 2;
+    mask1 = ADDVI_B(mask0, 2);
 
     LD_SB5(src, src_stride, src0, src1, src2, src3, src4);
     src += (5 * src_stride);
@@ -1337,7 +1337,7 @@ static void common_hv_4ht_6vt_8w_msa(uint8_t *RESTRICT src, int32_t src_stride,
     filt = LD_SH(filter_horiz);
     SPLATI_H2_SB(filt, 0, 1, filt_hz0, filt_hz1);
 
-    mask1 = mask0 + 2;
+    mask1 = ADDVI_B(mask0, 2);
 
     LD_SB5(src, src_stride, src0, src1, src2, src3, src4);
     src += (5 * src_stride);
@@ -1438,9 +1438,23 @@ void vp8_sixtap_predict4x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 3:
                         case 5:
                         case 7:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                            #else
+                                "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                            #endif
+
+                                : [v_filter] "+r" (v_filter)
+                            );
+                        #else
+                            v_filter += 1;
+                        #endif
+
                             common_hv_6ht_4vt_4w_msa(src, src_stride, dst,
                                                      dst_stride, h_filter,
-                                                     v_filter + 1, 4);
+                                                     v_filter, 4);
                             break;
                     }
                     break;
@@ -1454,8 +1468,22 @@ void vp8_sixtap_predict4x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 2:
                         case 4:
                         case 6:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #else
+                                "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #endif
+
+                                : [h_filter] "+r" (h_filter)
+                            );
+                        #else
+                            h_filter += 1;
+                        #endif
+
                             common_hv_4ht_6vt_4w_msa(src, src_stride, dst,
-                                                     dst_stride, h_filter + 1,
+                                                     dst_stride, h_filter,
                                                      v_filter, 4);
                             break;
 
@@ -1463,9 +1491,27 @@ void vp8_sixtap_predict4x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 3:
                         case 5:
                         case 7:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                                "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #else
+                                "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                                "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #endif
+
+                                : [v_filter] "+r" (v_filter),
+                                  [h_filter] "+r" (h_filter)
+                            );
+                        #else
+                            v_filter += 1;
+                            h_filter += 1;
+                        #endif
+
                             common_hv_4ht_4vt_4w_msa(src, src_stride, dst,
-                                                     dst_stride, h_filter + 1,
-                                                     v_filter + 1, 4);
+                                                     dst_stride, h_filter,
+                                                     v_filter, 4);
                             break;
                     }
                     break;
@@ -1486,8 +1532,22 @@ void vp8_sixtap_predict4x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
                 case 3:
                 case 5:
                 case 7:
+                #ifdef CLANG_BUILD
+                    asm volatile (
+                    #if (__mips == 64)
+                        "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                    #else
+                        "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                    #endif
+
+                        : [v_filter] "+r" (v_filter)
+                    );
+                #else
+                    v_filter += 1;
+                #endif
+
                     common_vt_4t_4w_msa(src, src_stride, dst, dst_stride,
-                                        v_filter + 1, 4);
+                                        v_filter, 4);
                     break;
             }
         }
@@ -1515,8 +1575,22 @@ void vp8_sixtap_predict4x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
             case 3:
             case 5:
             case 7:
+            #ifdef CLANG_BUILD
+                asm volatile (
+                #if (__mips == 64)
+                    "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                #else
+                    "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                #endif
+
+                    : [h_filter] "+r" (h_filter)
+                );
+            #else
+                h_filter += 1;
+            #endif
+
                 common_hz_4t_4w_msa(src, src_stride, dst, dst_stride,
-                                    h_filter + 1, 4);
+                                    h_filter, 4);
                 break;
         }
     }
@@ -1552,9 +1626,23 @@ void vp8_sixtap_predict8x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 3:
                         case 5:
                         case 7:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                            #else
+                                "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                            #endif
+
+                                : [v_filter] "+r" (v_filter)
+                            );
+                        #else
+                            v_filter += 1;
+                        #endif
+
                             common_hv_6ht_4vt_8w_msa(src, src_stride, dst,
                                                      dst_stride, h_filter,
-                                                     v_filter + 1, 4);
+                                                     v_filter, 4);
                             break;
                     }
                     break;
@@ -1568,8 +1656,22 @@ void vp8_sixtap_predict8x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 2:
                         case 4:
                         case 6:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #else
+                                "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #endif
+
+                                : [h_filter] "+r" (h_filter)
+                            );
+                        #else
+                            h_filter += 1;
+                        #endif
+
                             common_hv_4ht_6vt_8w_msa(src, src_stride, dst,
-                                                     dst_stride, h_filter + 1,
+                                                     dst_stride, h_filter,
                                                      v_filter, 4);
                             break;
 
@@ -1577,9 +1679,27 @@ void vp8_sixtap_predict8x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 3:
                         case 5:
                         case 7:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                                "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #else
+                                "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                                "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #endif
+
+                                : [v_filter] "+r" (v_filter),
+                                  [h_filter] "+r" (h_filter)
+                            );
+                        #else
+                            v_filter += 1;
+                            h_filter += 1;
+                        #endif
+
                             common_hv_4ht_4vt_8w_msa(src, src_stride, dst,
-                                                     dst_stride, h_filter + 1,
-                                                     v_filter + 1, 4);
+                                                     dst_stride, h_filter,
+                                                     v_filter, 4);
                             break;
                     }
                     break;
@@ -1600,8 +1720,22 @@ void vp8_sixtap_predict8x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
                 case 3:
                 case 5:
                 case 7:
+                #ifdef CLANG_BUILD
+                    asm volatile (
+                    #if (__mips == 64)
+                        "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                    #else
+                        "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                    #endif
+
+                        : [v_filter] "+r" (v_filter)
+                    );
+                #else
+                    v_filter += 1;
+                #endif
+
                     common_vt_4t_8w_msa(src, src_stride, dst, dst_stride,
-                                        v_filter + 1, 4);
+                                        v_filter, 4);
                     break;
             }
         }
@@ -1624,8 +1758,22 @@ void vp8_sixtap_predict8x4_msa(uint8_t *RESTRICT src, int32_t src_stride,
             case 3:
             case 5:
             case 7:
+            #ifdef CLANG_BUILD
+                asm volatile (
+                #if (__mips == 64)
+                    "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                #else
+                    "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                #endif
+
+                    : [h_filter] "+r" (h_filter)
+                );
+            #else
+                h_filter += 1;
+            #endif
+
                 common_hz_4t_8w_msa(src, src_stride, dst, dst_stride,
-                                    h_filter + 1, 4);
+                                    h_filter, 4);
                 break;
         }
     }
@@ -1661,9 +1809,23 @@ void vp8_sixtap_predict8x8_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 3:
                         case 5:
                         case 7:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                            #else
+                                "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                            #endif
+
+                                : [v_filter] "+r" (v_filter)
+                            );
+                        #else
+                            v_filter += 1;
+                        #endif
+
                             common_hv_6ht_4vt_8w_msa(src, src_stride, dst,
                                                      dst_stride, h_filter,
-                                                     v_filter + 1, 8);
+                                                     v_filter, 8);
                             break;
                     }
                     break;
@@ -1677,8 +1839,22 @@ void vp8_sixtap_predict8x8_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 2:
                         case 4:
                         case 6:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #else
+                                "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #endif
+
+                                : [h_filter] "+r" (h_filter)
+                            );
+                        #else
+                            h_filter += 1;
+                        #endif
+
                             common_hv_4ht_6vt_8w_msa(src, src_stride, dst,
-                                                     dst_stride, h_filter + 1,
+                                                     dst_stride, h_filter,
                                                      v_filter, 8);
                             break;
 
@@ -1686,9 +1862,27 @@ void vp8_sixtap_predict8x8_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 3:
                         case 5:
                         case 7:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                                "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #else
+                                "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                                "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #endif
+
+                                : [v_filter] "+r" (v_filter),
+                                  [h_filter] "+r" (h_filter)
+                            );
+                        #else
+                            v_filter += 1;
+                            h_filter += 1;
+                        #endif
+
                             common_hv_4ht_4vt_8w_msa(src, src_stride, dst,
-                                                     dst_stride, h_filter + 1,
-                                                     v_filter + 1, 8);
+                                                     dst_stride, h_filter,
+                                                     v_filter, 8);
                             break;
                     }
                     break;
@@ -1709,8 +1903,22 @@ void vp8_sixtap_predict8x8_msa(uint8_t *RESTRICT src, int32_t src_stride,
                 case 3:
                 case 5:
                 case 7:
+                #ifdef CLANG_BUILD
+                    asm volatile (
+                    #if (__mips == 64)
+                        "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                    #else
+                        "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                    #endif
+
+                        : [v_filter] "+r" (v_filter)
+                    );
+                #else
+                    v_filter += 1;
+                #endif
+
                     common_vt_4t_8w_msa(src, src_stride, dst, dst_stride,
-                                        v_filter + 1, 8);
+                                        v_filter, 8);
                     break;
             }
         }
@@ -1733,8 +1941,22 @@ void vp8_sixtap_predict8x8_msa(uint8_t *RESTRICT src, int32_t src_stride,
             case 3:
             case 5:
             case 7:
+            #ifdef CLANG_BUILD
+                asm volatile (
+                #if (__mips == 64)
+                    "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                #else
+                    "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                #endif
+
+                    : [h_filter] "+r" (h_filter)
+                );
+            #else
+                h_filter += 1;
+            #endif
+
                 common_hz_4t_8w_msa(src, src_stride, dst, dst_stride,
-                                    h_filter + 1, 8);
+                                    h_filter, 8);
                 break;
         }
     }
@@ -1770,9 +1992,23 @@ void vp8_sixtap_predict16x16_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 3:
                         case 5:
                         case 7:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                            #else
+                                "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                            #endif
+
+                                : [v_filter] "+r" (v_filter)
+                            );
+                        #else
+                            v_filter += 1;
+                        #endif
+
                             common_hv_6ht_4vt_16w_msa(src, src_stride, dst,
                                                       dst_stride, h_filter,
-                                                      v_filter + 1, 16);
+                                                      v_filter, 16);
                             break;
                     }
                     break;
@@ -1786,8 +2022,22 @@ void vp8_sixtap_predict16x16_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 2:
                         case 4:
                         case 6:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #else
+                                "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #endif
+
+                                : [h_filter] "+r" (h_filter)
+                            );
+                        #else
+                            h_filter += 1;
+                        #endif
+
                             common_hv_4ht_6vt_16w_msa(src, src_stride, dst,
-                                                      dst_stride, h_filter + 1,
+                                                      dst_stride, h_filter,
                                                       v_filter, 16);
                             break;
 
@@ -1795,9 +2045,27 @@ void vp8_sixtap_predict16x16_msa(uint8_t *RESTRICT src, int32_t src_stride,
                         case 3:
                         case 5:
                         case 7:
+                        #ifdef CLANG_BUILD
+                            asm volatile (
+                            #if (__mips == 64)
+                                "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                                "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #else
+                                "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                                "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                            #endif
+
+                                : [v_filter] "+r" (v_filter),
+                                  [h_filter] "+r" (h_filter)
+                            );
+                        #else
+                            v_filter += 1;
+                            h_filter += 1;
+                        #endif
+
                             common_hv_4ht_4vt_16w_msa(src, src_stride, dst,
-                                                      dst_stride, h_filter + 1,
-                                                      v_filter + 1, 16);
+                                                      dst_stride, h_filter,
+                                                      v_filter, 16);
                             break;
                     }
                     break;
@@ -1818,8 +2086,22 @@ void vp8_sixtap_predict16x16_msa(uint8_t *RESTRICT src, int32_t src_stride,
                 case 3:
                 case 5:
                 case 7:
+                #ifdef CLANG_BUILD
+                    asm volatile (
+                    #if (__mips == 64)
+                        "daddiu  %[v_filter],  %[v_filter], 1  \n\t"
+                    #else
+                        "addiu  %[v_filter],  %[v_filter], 1  \n\t"
+                    #endif
+
+                        : [v_filter] "+r" (v_filter)
+                    );
+                #else
+                    v_filter += 1;
+                #endif
+
                     common_vt_4t_16w_msa(src, src_stride, dst, dst_stride,
-                                         v_filter + 1, 16);
+                                         v_filter, 16);
                     break;
             }
         }
@@ -1842,8 +2124,22 @@ void vp8_sixtap_predict16x16_msa(uint8_t *RESTRICT src, int32_t src_stride,
             case 3:
             case 5:
             case 7:
+            #ifdef CLANG_BUILD
+                asm volatile (
+                #if (__mips == 64)
+                    "daddiu  %[h_filter],  %[h_filter], 1  \n\t"
+                #else
+                    "addiu  %[h_filter],  %[h_filter], 1  \n\t"
+                #endif
+
+                    : [h_filter] "+r" (h_filter)
+                );
+            #else
+                h_filter += 1;
+            #endif
+
                 common_hz_4t_16w_msa(src, src_stride, dst, dst_stride,
-                                     h_filter + 1, 16);
+                                     h_filter, 16);
                 break;
         }
     }
