@@ -191,7 +191,7 @@ static void intra_predict_dc_tl_4x4_msa(const uint8_t *src, uint8_t *dst,
 
 static void intra_predict_128dc_4x4_msa(uint8_t *dst, int32_t dst_stride) {
   uint32_t out;
-  const v16i8 store = __msa_ldi_b(128);
+  const v16i8 store = __msa_fill_b(128);
 
   out = __msa_copy_u_w((v4i32)store, 0);
 
@@ -250,7 +250,7 @@ static void intra_predict_dc_tl_8x8_msa(const uint8_t *src, uint8_t *dst,
 
 static void intra_predict_128dc_8x8_msa(uint8_t *dst, int32_t dst_stride) {
   uint64_t out;
-  const v16i8 store = __msa_ldi_b(128);
+  const v16i8 store = __msa_fill_b(128);
 
   out = __msa_copy_u_d((v2i64)store, 0);
 
@@ -305,7 +305,7 @@ static void intra_predict_dc_tl_16x16_msa(const uint8_t *src, uint8_t *dst,
 }
 
 static void intra_predict_128dc_16x16_msa(uint8_t *dst, int32_t dst_stride) {
-  const v16u8 out = (v16u8)__msa_ldi_b(128);
+  const v16u8 out = (v16u8)__msa_fill_b(128);
 
   ST_UB8(out, out, out, out, out, out, out, out, dst, dst_stride);
   dst += (8 * dst_stride);
@@ -370,7 +370,7 @@ static void intra_predict_dc_tl_32x32_msa(const uint8_t *src, uint8_t *dst,
 
 static void intra_predict_128dc_32x32_msa(uint8_t *dst, int32_t dst_stride) {
   uint32_t row;
-  const v16u8 out = (v16u8)__msa_ldi_b(128);
+  const v16u8 out = (v16u8)__msa_fill_b(128);
 
   for (row = 16; row--;) {
     ST_UB2(out, out, dst, 16);
