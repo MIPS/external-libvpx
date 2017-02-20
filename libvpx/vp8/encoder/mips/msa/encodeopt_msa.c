@@ -52,7 +52,7 @@ int32_t vp8_mbblock_error_msa(MACROBLOCK *mb, int32_t dc)
     v4i32 diff0, diff1;
     v2i64 err0, err1;
     v16u8 zero  = { 0 };
-    v16u8 mask0 = (v16u8)__msa_ldi_b(255);
+    v16u8 mask0 = (v16u8)__msa_ldi_b(-1);
 
     if (1 == dc)
     {
