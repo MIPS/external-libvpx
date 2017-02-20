@@ -36,12 +36,12 @@
     q1_m = (v16i8)__msa_xori_b(q1, 0x80);                  \
                                                            \
     filt = __msa_subs_s_b(p1_m, q1_m);                     \
-    filt &= hev;                                           \
+    filt &= (v16i8)hev;                                    \
     q0_sub_p0 = __msa_subs_s_b(q0_m, p0_m);                \
     filt = __msa_adds_s_b(filt, q0_sub_p0);                \
     filt = __msa_adds_s_b(filt, q0_sub_p0);                \
     filt = __msa_adds_s_b(filt, q0_sub_p0);                \
-    filt &= mask;                                          \
+    filt &= (v16i8)mask;                                   \
     t1 = __msa_adds_s_b(filt, cnst4b);                     \
     t1 >>= cnst3b;                                         \
     t2 = __msa_adds_s_b(filt, cnst3b);                     \
@@ -52,7 +52,7 @@
     p0 = __msa_xori_b((v16u8)p0_m, 0x80);                  \
     filt = __msa_srari_b(t1, 1);                           \
     hev = __msa_xori_b(hev, 0xff);                         \
-    filt &= hev;                                           \
+    filt &= (v16i8)hev;                                    \
     q1_m = __msa_subs_s_b(q1_m, filt);                     \
     q1 = __msa_xori_b((v16u8)q1_m, 0x80);                  \
     p1_m = __msa_adds_s_b(p1_m, filt);                     \
@@ -76,7 +76,7 @@
     filt = __msa_adds_s_b(filt, q0_sub_p0);               \
     filt = __msa_adds_s_b(filt, q0_sub_p0);               \
     filt = __msa_adds_s_b(filt, q0_sub_p0);               \
-    filt &= mask;                                         \
+    filt &= (v16i8)mask;                                  \
     filt1 = __msa_adds_s_b(filt, cnst4b);                 \
     filt1 >>= cnst3b;                                     \
     filt2 = __msa_adds_s_b(filt, cnst3b);                 \
@@ -110,11 +110,11 @@
     filt = __msa_adds_s_b(filt, q0_sub_p0);             \
     filt = __msa_adds_s_b(filt, q0_sub_p0);             \
     filt = __msa_adds_s_b(filt, q0_sub_p0);             \
-    filt &= mask;                                       \
+    filt &= (v16i8)mask;                                \
                                                         \
-    t2 = filt & hev;                                    \
+    t2 = filt & (v16i8)hev;                             \
     hev = __msa_xori_b(hev, 0xff);                      \
-    filt &= hev;                                        \
+    filt &= (v16i8)hev;                                 \
     t1 = __msa_adds_s_b(t2, cnst4b);                    \
     t1 >>= cnst3b;                                      \
     t2 = __msa_adds_s_b(t2, cnst3b);                    \
