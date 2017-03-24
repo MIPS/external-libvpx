@@ -28,9 +28,9 @@ void vpx_lpf_horizontal_4_msa(uint8_t *src, int32_t pitch,
   b_limit = (v16u8)__msa_fill_b(*b_limit_ptr);
   limit = (v16u8)__msa_fill_b(*limit_ptr);
 
-  LPF_MASK_HEV(p3, p2, p1, p0, q0, q1, q2, q3, limit, b_limit, thresh,
-               hev, mask, flat);
-  VP9_LPF_FILTER4_8W(p1, p0, q0, q1, mask, hev, p1_out, p0_out, q0_out, q1_out);
+  LPF_MASK_HEV(p3, p2, p1, p0, q0, q1, q2, q3, limit, b_limit, thresh, hev,
+               mask, flat);
+  VP9_LPF_FILTER4_4W(p1, p0, q0, q1, mask, hev, p1_out, p0_out, q0_out, q1_out);
 
   p1_d = __msa_copy_u_d((v2i64)p1_out, 0);
   p0_d = __msa_copy_u_d((v2i64)p0_out, 0);
@@ -64,8 +64,8 @@ void vpx_lpf_horizontal_4_dual_msa(uint8_t *src, int32_t pitch,
   limit1 = (v16u8)__msa_fill_b(*limit1_ptr);
   limit0 = (v16u8)__msa_ilvr_d((v2i64)limit1, (v2i64)limit0);
 
-  LPF_MASK_HEV(p3, p2, p1, p0, q0, q1, q2, q3, limit0, b_limit0, thresh0,
-               hev, mask, flat);
+  LPF_MASK_HEV(p3, p2, p1, p0, q0, q1, q2, q3, limit0, b_limit0, thresh0, hev,
+               mask, flat);
   VP9_LPF_FILTER4_4W(p1, p0, q0, q1, mask, hev, p1, p0, q0, q1);
 
   ST_UB4(p1, p0, q0, q1, (src - 2 * pitch), pitch);
@@ -88,11 +88,11 @@ void vpx_lpf_vertical_4_msa(uint8_t *src, int32_t pitch,
   b_limit = (v16u8)__msa_fill_b(*b_limit_ptr);
   limit = (v16u8)__msa_fill_b(*limit_ptr);
 
-  TRANSPOSE8x8_UB_UB(p3, p2, p1, p0, q0, q1, q2, q3,
-                     p3, p2, p1, p0, q0, q1, q2, q3);
-  LPF_MASK_HEV(p3, p2, p1, p0, q0, q1, q2, q3, limit, b_limit, thresh,
-               hev, mask, flat);
-  VP9_LPF_FILTER4_8W(p1, p0, q0, q1, mask, hev, p1, p0, q0, q1);
+  TRANSPOSE8x8_UB_UB(p3, p2, p1, p0, q0, q1, q2, q3, p3, p2, p1, p0, q0, q1, q2,
+                     q3);
+  LPF_MASK_HEV(p3, p2, p1, p0, q0, q1, q2, q3, limit, b_limit, thresh, hev,
+               mask, flat);
+  VP9_LPF_FILTER4_4W(p1, p0, q0, q1, mask, hev, p1, p0, q0, q1);
   ILVR_B2_SH(p0, p1, q1, q0, vec0, vec1);
   ILVRL_H2_SH(vec1, vec0, vec2, vec3);
 
@@ -109,7 +109,6 @@ void vpx_lpf_vertical_4_dual_msa(uint8_t *src, int32_t pitch,
                                  const uint8_t *b_limit1_ptr,
                                  const uint8_t *limit1_ptr,
                                  const uint8_t *thresh1_ptr) {
-  uint8_t *data;
   v16u8 mask, hev, flat;
   v16u8 thresh0, b_limit0, limit0, thresh1, b_limit1, limit1;
   v16u8 p3, p2, p1, p0, q3, q2, q1, q0;
@@ -117,28 +116,13 @@ void vpx_lpf_vertical_4_dual_msa(uint8_t *src, int32_t pitch,
   v16u8 row8, row9, row10, row11, row12, row13, row14, row15;
   v8i16 tmp0, tmp1, tmp2, tmp3, tmp4, tmp5;
 
-#ifdef CLANG_BUILD
-  asm volatile (
-  #if (__mips == 64)
-      "daddiu  %[data],  %[src],  -4  \n\t"
-  #else
-      "addiu   %[data],  %[src],  -4  \n\t"
-  #endif
+  LD_UB8(src - 4, pitch, row0, row1, row2, row3, row4, row5, row6, row7);
+  LD_UB8(src - 4 + (8 * pitch), pitch, row8, row9, row10, row11, row12, row13,
+         row14, row15);
 
-      : [data] "=r" (data)
-      : [src] "r" (src)
-  );
-#else
-  data = src - 4;
-#endif
-
-  LD_UB8(data, pitch, row0, row1, row2, row3, row4, row5, row6, row7);
-  LD_UB8(data + (8 * pitch), pitch,
-         row8, row9, row10, row11, row12, row13, row14, row15);
-
-  TRANSPOSE16x8_UB_UB(row0, row1, row2, row3, row4, row5, row6, row7,
-                      row8, row9, row10, row11, row12, row13, row14, row15,
-                      p3, p2, p1, p0, q0, q1, q2, q3);
+  TRANSPOSE16x8_UB_UB(row0, row1, row2, row3, row4, row5, row6, row7, row8,
+                      row9, row10, row11, row12, row13, row14, row15, p3, p2,
+                      p1, p0, q0, q1, q2, q3);
 
   thresh0 = (v16u8)__msa_fill_b(*thresh0_ptr);
   thresh1 = (v16u8)__msa_fill_b(*thresh1_ptr);
@@ -152,8 +136,8 @@ void vpx_lpf_vertical_4_dual_msa(uint8_t *src, int32_t pitch,
   limit1 = (v16u8)__msa_fill_b(*limit1_ptr);
   limit0 = (v16u8)__msa_ilvr_d((v2i64)limit1, (v2i64)limit0);
 
-  LPF_MASK_HEV(p3, p2, p1, p0, q0, q1, q2, q3, limit0, b_limit0, thresh0,
-               hev, mask, flat);
+  LPF_MASK_HEV(p3, p2, p1, p0, q0, q1, q2, q3, limit0, b_limit0, thresh0, hev,
+               mask, flat);
   VP9_LPF_FILTER4_4W(p1, p0, q0, q1, mask, hev, p1, p0, q0, q1);
   ILVR_B2_SH(p0, p1, q1, q0, tmp0, tmp1);
   ILVRL_H2_SH(tmp1, tmp0, tmp2, tmp3);
