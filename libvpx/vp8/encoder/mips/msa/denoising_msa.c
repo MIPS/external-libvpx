@@ -41,8 +41,6 @@ int32_t vp8_denoiser_filter_msa(uint8_t *mc_running_avg_y_ptr,
     v8i16 col_sum2 = { 0 };
     v8i16 col_sum3 = { 0 };
     v8i16 temp0_h, temp1_h, temp2_h, temp3_h, cmp, delta_vec;
-    v4i32 temp0_w;
-    v2i64 temp0_d, temp1_d;
     v8i16 zero = { 0 };
     v8i16 one = __msa_ldi_h(1);
     v8i16 four = __msa_ldi_h(4);
@@ -353,8 +351,6 @@ int32_t vp8_denoiser_filter_uv_msa(uint8_t *mc_running_avg_y_ptr,
     v8i16 shift_inc1_vec = { 0 };
     v8i16 col_sum0 = { 0 };
     v8i16 temp0_h, temp2_h, cmp, delta_vec;
-    v4i32 temp0_w;
-    v2i64 temp0_d, temp1_d;
     v16i8 zero = { 0 };
     v8i16 one = __msa_ldi_h(1);
     v8i16 four = __msa_ldi_h(4);

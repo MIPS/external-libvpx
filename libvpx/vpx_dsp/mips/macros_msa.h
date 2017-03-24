@@ -40,6 +40,7 @@
     #define __msa_srli_h     __builtin_msa_srli_h
     #define __msa_addvi_b    __builtin_msa_addvi_b
     #define __msa_addvi_h    __builtin_msa_addvi_h
+    #define __msa_addvi_w    __builtin_msa_addvi_w
     #define __msa_maxi_s_h   __builtin_msa_maxi_s_h
     #define __msa_max_u_b    __builtin_msa_max_u_b
     #define __msa_min_s_h    __builtin_msa_min_s_h
@@ -72,6 +73,7 @@
     #define __msa_dpadd_s_h  __builtin_msa_dpadd_s_h
     #define __msa_dpadd_s_w  __builtin_msa_dpadd_s_w
     #define __msa_dpadd_s_d  __builtin_msa_dpadd_s_d
+    #define __msa_dpsub_s_w  __builtin_msa_dpsub_s_w
     #define __msa_sldi_b     __builtin_msa_sldi_b
     #define __msa_splati_b   __builtin_msa_splati_b
     #define __msa_splati_h   __builtin_msa_splati_h
@@ -120,6 +122,7 @@
 
     #define ADDVI_B(a, b)  __msa_addvi_b((v16i8)a, b)
     #define ADDVI_H(a, b)  __msa_addvi_h((v8i16)a, b)
+    #define ADDVI_W(a, b)  __msa_addvi_w((v4i32)a, b)
     #define SLLI_H(a, b)   __msa_slli_h((v8i16)a, b)
     #define SRLI_B(a, b)   __msa_srli_b((v16i8)a, b)
     #define SRLI_H(a, b)   __msa_srli_h((v8i16)a, b)
@@ -137,6 +140,7 @@
 
     #define ADDVI_B(a, b)  ((v16i8)a + b)
     #define ADDVI_H(a, b)  ((v8i16)a + b)
+    #define ADDVI_W(a, b)  ((v4i32)a + b)
     #define SLLI_H(a, b)   ((v8i16)a << b)
     #define SRLI_B(a, b)   ((v16u8)a >> b)
     #define SRLI_H(a, b)   ((v8u16)a >> b)
@@ -1103,6 +1107,25 @@
   sum_m = __msa_copy_s_w((v4i32)res0_m, 0);       \
   sum_m;                                          \
 })
+
+/* Description : Horizontal addition of 4 unsigned word elements
+   Arguments   : Input  - in       (unsigned word vector)
+                 Output - sum_m    (u32 sum)
+                 Return Type - unsigned word (GP)
+   Details     : 4 unsigned word elements of 'in' vector are added together and
+                 the resulting integer sum is returned
+*/
+#define HADD_UW_U32(in)                               \
+  ({                                                  \
+    v2u64 res0_m, res1_m;                             \
+    uint32_t sum_m;                                   \
+                                                      \
+    res0_m = __msa_hadd_u_d((v4u32)in, (v4u32)in);    \
+    res1_m = (v2u64)__msa_splati_d((v2i64)res0_m, 1); \
+    res0_m += res1_m;                                 \
+    sum_m = __msa_copy_u_w((v4i32)res0_m, 0);         \
+    sum_m;                                            \
+  })
 
 /* Description : Horizontal addition of 8 unsigned halfword elements
    Arguments   : Inputs  - in       (unsigned halfword vector)
